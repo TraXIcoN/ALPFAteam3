@@ -1,0 +1,14 @@
+{% extends "my_app/base.html" %}
+
+{% block title %}Sponsors{% endblock %}
+
+{% block content %}
+<h1>Sponsor Options</h1>
+<nav>
+    <ul>
+        <li><a href="{% url 'sponsor_profile' %}">Sponsor Profile</a></li>
+        <li><a href="{% url 'event_description' %}">Event Description</a></li>
+        <li><a href="{% url 'candidates_invited' %}">Invited Candidates</a></li>
+    </ul>
+</nav>
+{% endblock %}

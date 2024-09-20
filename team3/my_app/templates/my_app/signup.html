@@ -1,0 +1,11 @@
+{% extends "my_app/base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<h1>Sign Up</h1>
+<form action="{% url 'signup' %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Sign Up</button>
+</form>
+{% endblock %}
