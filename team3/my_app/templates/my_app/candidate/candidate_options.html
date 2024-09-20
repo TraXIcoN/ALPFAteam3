@@ -1,0 +1,14 @@
+{% extends "my_app/base.html" %}
+
+{% block title %}Candidates{% endblock %}
+
+{% block content %}
+<h1>Candidate Options</h1>
+<nav>
+    <ul>
+        <li><a href="{% url 'candidate_profile' %}">Make a Profile</a></li>
+        <li><a href="{% url 'organization_page' %}">View Organization</a></li>
+        <li><a href="{% url 'employee_list' %}">Employee List</a></li>
+    </ul>
+</nav>
+{% endblock %}
