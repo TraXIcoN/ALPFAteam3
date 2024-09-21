@@ -1,6 +1,7 @@
 // src/NavBar.js
 import React from 'react';
 import './NavBar.css'; // Import your custom CSS for styling
+import { Link } from 'react-router-dom';
 
 function NavBar() {
   return (
@@ -53,8 +54,9 @@ function NavBar() {
         </li>
       </ul>
       <div className="navbar-buttons">
-        <button className="login-btn">MEMBER LOGIN</button>
-        <button className="register-btn">REGISTER</button>
+        {/* <button className="login-btn">MEMBER LOGIN</button> */}
+        <Link to="/Login" className="login-btn">MEMBER LOGIN</Link>
+        <button className="register-btn">ADMIN LOGIN</button>
         <a href="/faqs" className="faq-link">FAQs</a> {/* Change to an anchor tag for navigation */}
       </div>
     </nav>

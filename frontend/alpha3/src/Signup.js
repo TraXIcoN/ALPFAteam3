@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Container, TextField, Button, Typography, Box, Paper } from '@mui/material';
 
 const Signup = () => {
@@ -18,7 +19,8 @@ const Signup = () => {
           </Button>
         </form>
         <Typography variant="body2" align="center" style={{ marginTop: '1rem' }}>
-          Already have an account? <a href="/">Login</a>
+          {/* Already have an account? <a href="/">Login</a> */}
+          Already have an account? <Link to="/login">Login</Link>
         </Typography>
       </Paper>
     </Container>
