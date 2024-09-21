@@ -4,8 +4,21 @@
 
 {% block content %}
 <h1>Sign Up</h1>
-<form action="{% url 'signup' %}" method="POST">
-    {% csrf_token %}
-    <button type="submit">Sign Up</button>
-</form>
+
+    <!-- Display messages -->
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- This renders the form fields and labels -->
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Log in here</a>.</p>
 {% endblock %}
