@@ -1,3 +1,29 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# frontend files to ignore
+frontend/alpha3/node_modules
+frontend/alpha3/.pnp
+frontend/alpha3/.pnp.js
+
+# testing
+frontend/alpha3/coverage
+
+# production
+frontend/alpha3/build
+
+# misc
+frontend/alpha3/.DS_Store
+frontend/alpha3/.env.local
+frontend/alpha3/.env.development.local
+frontend/alpha3/.env.test.local
+frontend/alpha3/.env.production.local
+
+frontend/alpha3/npm-debug.log*
+frontend/alpha3/yarn-debug.log*
+frontend/alpha3/yarn-error.log*
+
+#=======================================================
+
 # Django #
 *.log
 *.pot
@@ -152,3 +178,4 @@ yarn-debug.log*
 yarn-error.log*
 /.changelog
 .npm/
+
