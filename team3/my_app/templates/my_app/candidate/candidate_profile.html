@@ -3,5 +3,82 @@
 {% block title %}Create a Profile{% endblock %}
 
 {% block content %}
-<h1>Create a profile</h1>
+<h1>Welcome, {{ candidate.name }}</h1>
+    <p>Contact Info: {{ candidate.contact_info }}</p>
+    {% if candidate.linkedin_profile %}
+        <p>LinkedIn Profile: <a href="{{ candidate.linkedin_profile }}">{{ candidate.linkedin_profile }}</a></p>
+    {% else %}
+        <p>No LinkedIn profile available.</p>
+{% endif %}
+    <h2>Portfolio</h2>
+    {% if candidate.portfolio %}
+        <p>Portfolio: <a href="{{ candidate.portfolio }}">{{ candidate.portfolio }}</a></p>
+    {% else %}
+        <p>No portfolio available.</p>
+    {% endif %}
+
+    <!-- Professional Experience -->
+    <h2>Professional Experience</h2>
+    <p>Job Title: {{ candidate.job_title }}</p>
+    <p>Industry: {{ candidate.industry }}</p>
+    <p>Years of Experience: {{ candidate.years_of_experience }}</p>
+
+    <!-- Education -->
+    <h2>Education</h2>
+    <p>Degree: {{ candidate.degree }}</p>
+    <p>Institution: {{ candidate.institution }}</p>
+    <p>Graduation Year: {{ candidate.graduation_year|default:"N/A" }}</p>
+    {% if candidate.certification %}
+        <p>Certification: {{ candidate.certification }}</p>
+    {% else %}
+        <p>No certifications available.</p>
+    {% endif %}
+
+    <!-- Skills -->
+    <h2>Skills</h2>
+    <p>Technical Skills: {{ candidate.technical_skills }}</p>
+    {% if candidate.soft_skills %}
+        <p>Soft Skills: {{ candidate.soft_skills }}</p>
+    {% else %}
+        <p>No soft skills provided.</p>
+    {% endif %}
+
+    <!-- Career Goals -->
+    <h2>Career Goals</h2>
+    <p>Preferred Industry: {{ candidate.preferred_industry }}</p>
+    <p>Preferred Role: {{ candidate.preferred_role }}</p>
+    <p>Preferred Work Environment: {{ candidate.get_preferred_work_environment_display }}</p>
+    {% if candidate.career_goals %}
+        <p>Career Goals: {{ candidate.career_goals }}</p>
+    {% else %}
+        <p>No career goals provided.</p>
+    {% endif %}
+
+    <!-- Cultural & Value Fit -->
+    <h2>Cultural & Value Fit</h2>
+    {% if candidate.values %}
+        <p>Values: {{ candidate.values }}</p>
+    {% else %}
+        <p>No values provided.</p>
+    {% endif %}
+    {% if candidate.team_preferences %}
+        <p>Team Preferences: {{ candidate.team_preferences }}</p>
+    {% else %}
+        <p>No team preferences provided.</p>
+    {% endif %}
+
+    <!-- Location Preferences -->
+    <h2>Location Preferences</h2>
+    <p>Preferred Location: {{ candidate.location_preference }}</p>
+    <p>Open to Relocation: {{ candidate.relocation_open|yesno:"Yes,No" }}</p>
+    <p>Availability: {{ candidate.get_availability_display }}</p>
+
+    <!-- Recommendations (Optional) -->
+    <h2>Recommendations</h2>
+    {% if candidate.endorsements %}
+        <p>Endorsements: {{ candidate.endorsements }}</p>
+    {% else %}
+        <p>No endorsements available.</p>
+    {% endif %}
+    <a href="{% url 'edit_candidate_profile' %}">Edit Profile</a>
 {% endblock %}

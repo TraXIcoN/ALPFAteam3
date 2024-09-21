@@ -11,6 +11,9 @@ urlpatterns = [
     path('candidate/organization/', views.view_orgs, name='organization_page'),
     path('candidate/profile/', views.candidate_profile, name='candidate_profile'),
     path('candidate/employees/', views.employee_list, name='employee_list'),
+    path('candidate/register/', views.candidate_form_view, name='candidate_register'),
+    path('candidate/profile/edit/', views.edit_candidate_profile_view, name='edit_candidate_profile'),
+    path('accounts/login/', views.login, name="redirect_to_login"),
     
     #for sponsors
     path('sponsor/', views.sponsor_options, name='sponsor_options'),
