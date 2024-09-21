@@ -45,3 +45,11 @@ We are developing a solution for the ALPFA organization to facilitate efficient 
 2. Ensure you’re working in the correct branch (Main for backend, UI for frontend).
 3. Pull the latest changes from the main branch to avoid conflicts.
 4. Make your updates and submit a pull request for review.
+
+
+Steps to setup the frontend(React)
+1. Clone the project
+2. Switch to the ui branch, then navigate to the frontend directory()
+3. Run the commnd "npm install to install all the node modules"
+4. To start the application, run the command "npm start"
+
