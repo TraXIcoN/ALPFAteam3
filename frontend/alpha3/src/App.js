@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // // src/App.js
 // import React from 'react';
 // import NavBar from './NavBar';  // Import your super cool custom NavBar
@@ -66,6 +67,21 @@ function App() {
         </div>
       </section>
     </div>
+=======
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './Login';
+import Signup from './Signup';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+    </Router>
+>>>>>>> 3f94c861b8efe3fe61f6142ed3441dc7e01b491e
   );
 }
 
