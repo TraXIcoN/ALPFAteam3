@@ -1,10 +1,10 @@
 // src/App.js
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import NavBar from './NavBar';
-import LandingPage from './landingPage';
-import Login from './Login';
-import Signup from './Signup';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import NavBar from "./components/navbar/NavBar";
+import LandingPage from "./views/landingpage/landingPage"; // Corrected casing in import path
+import Login from "./views/login/Login";
+import Signup from "./views/signup/Signup";
 
 function App() {
   return (
