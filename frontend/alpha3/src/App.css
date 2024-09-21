@@ -1,38 +1,86 @@
-.App {
-  text-align: center;
-}
+/* Basic styles for the App */
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/* Hero Section */
+.hero-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: black;
+    color: white;
+    padding: 20px;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  
+  .hero-image {
+    width: 70%;
+    object-fit: cover;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .hero-content {
+    position: absolute;
+    left: 10%;
+    top: 40%;
+    color: white;
   }
-}
+  
+  .hero-content h1 {
+    font-size: 4rem;
+    color: #e74c3c; /* Red color to match */
+  }
+  
+  .hero-content p {
+    font-size: 1.5rem;
+    color: white;
+  }
+  
+  .hero-logo {
+    width: 200px;
+    height: auto;
+    margin-right: 20px;
+  }
+  
+  /* Purpose Section */
+  .purpose-section {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  
+  .purpose-section h2 {
+    font-size: 2rem;
+    color: #e74c3c;
+    margin-bottom: 10px;
+  }
+  
+  .purpose-section p {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  /* Highlights Section */
+  .highlights-section {
+    display: flex;
+    justify-content: space-around;
+    padding: 40px 20px;
+  }
+  
+  .highlight-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 220px;
+    text-align: center;
+  }
+  
+  .highlight-card h3 {
+    font-size: 1.5rem;
+    color: #e74c3c;
+    margin-bottom: 10px;
+  }
+  
+  .highlight-card p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  
