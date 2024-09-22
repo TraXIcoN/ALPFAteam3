@@ -13,10 +13,15 @@ function App() {
   return (
     <Router>
       <Routes>
+<<<<<<< HEAD
       <Route path="/Candidatedashboard" element={<Candidatedashboard/>} />
         <Route path="/Eventlist" element={<Eventlist/>} />
         <Route path="/Typeformembed" element={<Typeformembed/>} />
         <Route path="/Profile" element={<Profile/>} />
+=======
+        <Route path="/Typeformembed" element={<Typeformembed />} />
+        <Route path="/Profile" element={<Profile />} />
+>>>>>>> 0525ed89fad4a20b1e8c97c039594539289f1a17
         <Route path="/" element={<LandingPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

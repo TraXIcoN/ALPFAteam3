@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   TextField,
@@ -14,7 +14,60 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import alpfalogo from "../../assets/alpfalogo.png";
+import axios from "axios";
+
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Determine if the user is logging in with email or username
+      const loginData = {
+        password: formData.password,
+      };
+
+      // Check if email is provided, if so, use it for login
+      if (formData.email) {
+        loginData.email = formData.email; // Use email for login
+      } else if (formData.username) {
+        loginData.username = formData.username; // Use username for login
+      } else {
+        alert("Please provide either an email or a username.");
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:8000/api/login/",
+        loginData
+      );
+
+      // Assuming the response contains the user data
+      const { username, token } = response.data; // Adjust based on your API response structure
+
+      // Store the token and username in local storage
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("username", username); // Store the username
+
+      console.log("Logged in username:", username); // Log the username
+      alert("Login successful!"); // You can redirect or store user info here
+      // Redirect or update state as needed
+    } catch (error) {
+      console.error("Error logging in:", error);
+      alert(
+        "Error logging in: " +
+          (error.response?.data?.error || "Invalid credentials")
+      );
+    }
+  };
+
   return (
     <Container
       maxWidth="md"
@@ -60,12 +113,15 @@ const Login = () => {
           <Typography variant="body1" align="center">
             Or
           </Typography>
-          <form style={{ marginTop: "1rem" }}>
+          <form onSubmit={handleSubmit} style={{ marginTop: "1rem" }}>
             <TextField
               fullWidth
               label="Email address"
               variant="outlined"
               margin="normal"
+              name="email"
+              onChange={handleChange}
+              required
             />
             <TextField
               fullWidth
@@ -73,6 +129,9 @@ const Login = () => {
               type="password"
               variant="outlined"
               margin="normal"
+              name="password"
+              onChange={handleChange}
+              required
             />
             <Box
               display="flex"
@@ -92,6 +151,7 @@ const Login = () => {
               variant="contained"
               color="primary"
               style={{ marginTop: "1rem" }}
+              type="submit"
             >
               Login
             </Button>
@@ -101,7 +161,7 @@ const Login = () => {
             align="center"
             style={{ marginTop: "1rem" }}
           >
-            Don't have an account? <Link href="Signup">Register</Link>
+            Don't have an account? <Link href="/signup">Register</Link>
           </Typography>
         </Box>
       </Paper>

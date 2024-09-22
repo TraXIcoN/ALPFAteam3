@@ -5,7 +5,7 @@ class Candidate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     #basic info
     name = models.CharField(max_length=255)
-    contact_info = models.CharField(max_length=255)  
+    contact_info = models.CharField(max_length=255)
     linkedin_profile = models.URLField(blank=True, null=True)
     portfolio = models.URLField(blank=True, null=True)
 
@@ -29,7 +29,7 @@ class Candidate(models.Model):
     preferred_role = models.CharField(max_length=255)
     preferred_work_environment = models.CharField(max_length=50, choices=[
         ('remote', 'Remote'), ('in_office', 'In-office'), ('hybrid', 'Hybrid')])
-    career_goals = models.TextField(blank=True, null=True)  
+    career_goals = models.TextField(blank=True, null=True)
 
     # Cultural & Value Fit
     values = models.TextField(blank=True, null=True)
