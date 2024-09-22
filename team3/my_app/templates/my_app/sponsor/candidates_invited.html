@@ -1,7 +1,21 @@
-{% extends "my_app/base.html" %}
-
-{% block title %}Invited Candidates{% endblock %}
+{% extends 'my_app/base.html' %}
 
 {% block content %}
-<h1>Candidates that match your criteria</h1>
+    <h1>Invited Candidates</h1>
+    {% if matches %}
+        <ul>
+            {% for match in matches %}
+                <li>
+                    <strong>{{ match.candidate.name }}</strong><br>
+                    Job Title: {{ match.candidate.job_title }}<br>
+                    Industry: {{ match.candidate.industry }}<br>
+                    Years of Experience: {{ match.candidate.years_of_experience }}<br>
+                    Preferred Role: {{ match.candidate.preferred_role }}<br>
+                    Similarity Score: {{ match.similarity|floatformat:2 }}%  <!-- Display similarity score with % -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No candidates have been matched yet.</p>
+    {% endif %}
 {% endblock %}
