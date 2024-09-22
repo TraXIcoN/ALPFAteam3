@@ -3,8 +3,10 @@ from .forms import CandidateForm, SponsorForm
 from django.contrib.auth.decorators import login_required
 from .models import Candidate
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
+from django.http import HttpResponseBadRequest
+
 
 #Landing page 
 def home(request):
@@ -37,6 +39,14 @@ def login(request):
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'my_app/login.html')
+
+#logout page
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('login')  # Redirect to login page after logout
+    else:
+        return HttpResponseBadRequest("Logout must be a POST request.")
 
 #candidate options
 def candidate_options(request):
