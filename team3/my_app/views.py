@@ -5,13 +5,28 @@ from .models import Candidate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from .serializers import CandidateSerializer, UserSerializer
+from rest_framework.authtoken.models import Token
+from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 
-#Landing page 
+#Landing page
 def home(request):
     return render(request, 'my_app/home.html')
 
-
+@api_view(['POST'])
 def signup(request):
+    if request.method == 'POST':
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Your account has been created! You can now log in.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def signup_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -19,24 +34,27 @@ def signup(request):
             messages.success(request, 'Your account has been created! You can now log in.')
             return redirect('login')  # Redirect to the login page
         else:
-            # Handle errors from the form
             messages.error(request, 'Please correct the error(s) below.')
     else:
         form = UserCreationForm()
     return render(request, 'my_app/signup.html', {'form': form})
 
-#login page
+@api_view(['GET', 'POST'])
 def login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            auth_login(request, user)  # Start a session for the user
-            return redirect('candidate_profile')  # Redirect to the profile page
-        else:
-            messages.error(request, 'Invalid username or password.')
-    return render(request, 'my_app/login.html')
+    username = request.data.get('email')  # Get username from request data
+    password = request.data.get('password')  # Get password from request data
+    user = authenticate(username=username, password=password)
+
+    if user is not None:
+        # User is authenticated
+        token, created = Token.objects.get_or_create(user=user)  # Generate or get the token for the user
+        return Response({
+            'username': user.username,  # Return the username
+            'token': token.key,  # Return the token
+            'message': 'Login successful!'
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 #candidate options
 def candidate_options(request):
@@ -47,25 +65,66 @@ def view_orgs(request):
     return render(request, 'my_app/candidate/view_organizations.html')
 
 #candidate profile page
-@login_required
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def candidate_profile(request):
-    try:
-        # Check if the candidate is already registered
-        candidate = Candidate.objects.get(user=request.user)  # Assuming there's a foreign key to the user
-        return render(request, 'my_app/candidate/candidate_profile.html', {'candidate': candidate})
-    except Candidate.DoesNotExist:
-        # If no candidate profile exists, render the registration form
-        if request.method == 'POST':
-            form = CandidateForm(request.POST)
-            if form.is_valid():
-                candidate = form.save(commit=False)
-                candidate.user = request.user  # Link the user to the candidate
-                candidate.save()
-                return redirect('candidate_profile')  # Redirect to the profile page once registered
-        else:
-            form = CandidateForm()
+    if request.method == 'GET':
+        try:
+            candidate = Candidate.objects.get(user=request.user)
+            return render(request, 'my_app/candidate/candidate_profile.html', {'candidate': candidate})
+        except Candidate.DoesNotExist:
+            return JsonResponse({'error': 'Candidate profile does not exist.'}, status=404)
 
-        return render(request, 'my_app/candidate/candidate_form.html', {'form': form})
+    elif request.method == 'POST':
+        # Convert incoming data to a dictionary
+        data = request.data  # This should be a dictionary
+
+        # If the data is in a list format, convert it to a dictionary
+        if isinstance(data, list):
+            data_dict = {str(i): value for i, value in enumerate(data)}
+        else:
+            data_dict = data  # If it's already a dictionary, use it directly
+
+        # Create a mapping of expected field names based on the specified order
+        expected_fields = {
+            'user': request.user,  # Automatically set the user
+            'name': data_dict.get('0'),  # Name
+            'contact_info': data_dict.get('1'),  # Contact Info
+            'linkedin_profile': data_dict.get('2'),  # LinkedIn Profile
+            'portfolio': data_dict.get('3'),  # Portfolio
+            'job_title': data_dict.get('4'),  # Job Title
+            'industry': data_dict.get('5'),  # Industry
+            'years_of_experience': data_dict.get('6'),  # Years of Experience
+            'degree': data_dict.get('7'),  # Degree
+            'certification': data_dict.get('8'),  # Certification
+            'institution': data_dict.get('9'),  # Institution
+            'graduation_year': data_dict.get('10'),  # Graduation Year
+            'technical_skills': data_dict.get('11'),  # Technical Skills
+            'soft_skills': data_dict.get('12'),  # Soft Skills
+            'preferred_industry': data_dict.get('13'),  # Preferred Industry
+            'preferred_role': data_dict.get('14'),  # Preferred Role
+            'preferred_work_environment': data_dict.get('15').lower(),  # Preferred Work Environment
+            'career_goals': data_dict.get('16'),  # Career Goals
+            'values': data_dict.get('17'),  # Values
+            'team_preferences': data_dict.get('18'),  # Team Preferences
+            'location_preference': data_dict.get('19'),  # Location Preference
+            'relocation_open': data_dict.get('20') == 'Yes',  # Relocation Open (convert to boolean)
+            'availability': data_dict.get('21').lower(),  # Availability
+            'endorsements': data_dict.get('22'),  # Endorsements
+        }
+
+        # Create a CandidateForm instance with the mapped data
+        form = CandidateForm(expected_fields)
+
+        if form.is_valid():
+            candidate = form.save(commit=False)
+            candidate.user = request.user  # Link the user to the candidate
+            candidate.save()
+            return JsonResponse({'message': 'Profile created successfully!'}, status=201)
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 @login_required
 def edit_candidate_profile_view(request):
