@@ -5,9 +5,9 @@ urlpatterns = [
     path('', views.home, name='home'),  #landing oage
     path('signup/', views.signup, name='signup'),
     path('api/signup/', views.signup, name='api_signup'),  # API endpoint for signup
-    path('api/login/', views.login, name='api_login'),  # API endpoint for signup
+    path('api/login/', views.login, name='api_signup'),  # API endpoint for signup
     path('login/', views.login, name='login'),  
-
+    
     #for candidates
     path('candidate/', views.candidate_options, name='candidate_options'),
     path('candidate/organization/', views.view_orgs, name='organization_page'),
