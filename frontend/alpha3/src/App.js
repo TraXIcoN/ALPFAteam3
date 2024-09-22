@@ -12,8 +12,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/Typeformembed" element={<Typeformembed/>} />
-        <Route path="/Profile" element={<Profile/>} />
+        <Route path="/Typeformembed" element={<Typeformembed />} />
+        <Route path="/Profile" element={<Profile />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
