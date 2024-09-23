@@ -12,11 +12,13 @@ import SponsorTypeformembed from "./views/sponsor/profile/sponsorTypeformembed";
 import Eventlist from "./views/candidate/Eventlist";
 import Candidatedashboard from "./views/candidate/Candidatedashboard";
 import Corspage from './views/signup/Corspage'; 
+import Sdashboard from "./views/sponsor/Sdashboard";
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/Sdashboard" element={<Sdashboard/>} />
         <Route path="/Corspage" element={<Corspage/>} />
         <Route path="/Candidatedashboard" element={<Candidatedashboard/>} />
         <Route path="/Eventlist" element={<Eventlist/>} />
