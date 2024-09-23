@@ -14,7 +14,7 @@ import Candidatedashboard from "./views/candidate/Candidatedashboard";
 import Corspage from "./views/signup/Corspage";
 import ViewProfile from "./views/candidate/profile/Viewprofile";
 import SponsorProfile from "./views/sponsor/profile/SponsorProfile";
-import { View } from "lucide-react";
+import { Inbox, View } from "lucide-react";
 
 function App() {
   return (
@@ -24,6 +24,7 @@ function App() {
         <Route path="/Candidatedashboard" element={<Candidatedashboard />} />
         <Route path="/Eventlist" element={<Eventlist />} />
         <Route path="/Typeformembed" element={<Typeformembed />} />
+        <Route path="/Inbox" element={<Inbox />} />
         <Route
           path="/SponsorTypeformembed"
           element={<SponsorTypeformembed />}

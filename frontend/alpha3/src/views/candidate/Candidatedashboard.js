@@ -11,6 +11,7 @@ import {
 import alfalogo from "../../assets/alpfalogo.png"; // Import your logo here
 import Eventlist from "./Eventlist"; // Ensure this is the correct path for Eventlist
 import ViewProfile from "./profile/Viewprofile";
+import InboxComponent from './Inbox'; // Ensure this path is correct
 
 const SidebarItem = ({ icon: Icon, label, isNew, isActive, onClick }) => (
   <li
@@ -96,7 +97,7 @@ const AiReview = () => (
 const PageContent = ({ page }) => {
   const pageComponents = {
     viewmyprofile: ViewProfile,
-    inbox: () => <div>Inbox Page Content</div>,
+    inbox: InboxComponent, 
     events: Eventlist, // Directly reference the imported Eventlist component
     sponsors: () => <div>Employers Page Content</div>,
     AiReview: AiReview,
