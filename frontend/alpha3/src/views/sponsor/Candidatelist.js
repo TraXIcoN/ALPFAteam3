@@ -14,9 +14,15 @@ import {
   DialogActions,
   TextField,
   Typography,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 
 const CandidateList = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
+  const [openSearch, setOpenSearch] = useState(false);
   const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -144,6 +150,26 @@ const CandidateList = () => {
     },
   ];
 
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    // Filter candidates based on the search term
+    const filtered = candidates.filter((candidate) =>
+      candidate.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredCandidates(filtered.slice(0, 3)); // Limit to 3 results
+  };
+
+  const handleSearchOpen = () => {
+    setOpenSearch(true);
+  };
+
+  const handleSearchClose = () => {
+    setOpenSearch(false);
+    setSearchTerm("");
+    setFilteredCandidates([]);
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -168,6 +194,8 @@ const CandidateList = () => {
           type="text"
           placeholder="Search candidates..."
           className="w-full p-2 border rounded-lg"
+          onFocus={handleSearchOpen} // Open search dialog on focus
+          onChange={handleSearchChange} // Update search term
         />
         <div className="mt-4 flex space-x-4">
           <select className="p-2 border rounded-lg">
@@ -292,6 +320,50 @@ const CandidateList = () => {
         <DialogActions>
           <Button onClick={handleClose} color="secondary">
             Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openSearch}
+        onClose={handleSearchClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <Typography variant="h6">Search Results</Typography>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            placeholder="Type to search..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            fullWidth
+            margin="normal"
+          />
+          <List>
+            {filteredCandidates.length > 0 ? (
+              filteredCandidates.map((candidate) => (
+                <ListItem
+                  button
+                  key={candidate.id}
+                  onClick={() => console.log(`Selected: ${candidate.name}`)}
+                >
+                  <ListItemText
+                    primary={candidate.name}
+                    secondary={candidate.jobTitle}
+                  />
+                </ListItem>
+              ))
+            ) : (
+              <Typography>No candidates found.</Typography>
+            )}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSearchClose} color="secondary">
+            Close
           </Button>
         </DialogActions>
       </Dialog>

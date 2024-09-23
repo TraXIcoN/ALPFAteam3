@@ -16,6 +16,14 @@ import ViewProfile from "./profile/Viewprofile";
 import Sponsorlist from "./Sponsorlist";
 import InboxComponent from "./inbox";
 
+const SolutionCard = ({ icon: Icon, title, description }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md">
+    <Icon className="w-12 h-12 text-blue-500 mb-4" />
+    <h3 className="text-xl font-semibold mb-2">{title}</h3>
+    <p className="text-gray-600">{description}</p>
+  </div>
+);
+
 const SidebarItem = ({ icon: Icon, label, isNew, isActive, onClick }) => (
   <li
     className={`flex items-center px-4 py-2 cursor-pointer ${
@@ -50,7 +58,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
   const menuItems = [
     { icon: CircleUserRoundIcon, label: "My Profile", path: "viewmyprofile" },
     { icon: Inbox, label: "Inbox", path: "inbox" },
-    { icon: Calendar, label: "Events", path: "events" }, // Update path to match the key in PageContent
+    { icon: Calendar, label: "Events", path: "events" },
     { icon: Building, label: "Sponsors", path: "sponsors" },
     { icon: PenBox, label: "AiReview", path: "AiReview" },
     { icon: DoorOpen, label: "Logout", path: "logout" },
@@ -61,9 +69,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
   };
   const handleSubmit = () => {
     if (file) {
-      // Here you would typically handle the file upload
       console.log("Uploading file:", file.name);
-      // Reset the file state after upload
       setFile(null);
     }
   };
@@ -71,8 +77,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
   return (
     <div className="w-64 bg-white shadow-md h-screen flex flex-col">
       <div className="p-4 flex items-center">
-        <img src={alfalogo} alt="Logo" className="w-32 h-auto" />{" "}
-        {/* Add your logo here */}
+        <img src={alfalogo} alt="Logo" className="w-32 h-auto" />
       </div>
       <nav className="mt-4 flex-grow">
         <ul>
@@ -81,7 +86,6 @@ const Sidebar = ({ activePage, setActivePage }) => {
               key={item.path}
               icon={item.icon}
               label={item.label}
-              isNew={item.isNew}
               isActive={activePage === item.path}
               onClick={() => setActivePage(item.path)}
             />
@@ -115,13 +119,56 @@ const Sidebar = ({ activePage, setActivePage }) => {
   );
 };
 
+const DashboardHome = () => (
+  <div className="p-6 space-y-8">
+    <h1 className="text-3xl font-bold text-center mb-8">
+      Welcome to Your Candidate Dashboard!
+    </h1>
+    <p className="text-center text-gray-700 mb-6">
+      Your personalized hub for job searching and networking opportunities.
+      Here, you'll find everything you need to enhance your career journey in
+      one convenient location.
+    </p>
+
+    <h2 className="text-2xl font-bold text-center my-8">Features</h2>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <SolutionCard
+        icon={CircleUserRoundIcon}
+        title="My Profile"
+        description="View and edit your personal profile. Keep your information up to date to maximize your visibility to potential employers."
+      />
+      <SolutionCard
+        icon={Inbox}
+        title="Inbox"
+        description="Check your messages and notifications from employers and event organizers. Stay informed about new opportunities."
+      />
+      <SolutionCard
+        icon={Calendar}
+        title="Events"
+        description="Explore upcoming events tailored for job seekers. Join workshops and networking sessions to connect with employers."
+      />
+      <SolutionCard
+        icon={Building}
+        title="Sponsors"
+        description="Discover organizations that support our community. Learn about sponsorship opportunities and how they can help you."
+      />
+      <SolutionCard
+        icon={PenBox}
+        title="AiReview"
+        description="Get AI-generated feedback on your resume and application materials. Improve your chances of landing interviews."
+      />
+    </div>
+  </div>
+);
+
 const AiReview = () => (
   <div
     style={{
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      height: "100vh", // Full viewport height
+      height: "100vh",
       textAlign: "center",
     }}
   >
@@ -148,6 +195,7 @@ const AiReview = () => (
 
 const PageContent = ({ page }) => {
   const pageComponents = {
+    home: DashboardHome, // Use DashboardHome as the default home page
     viewmyprofile: ViewProfile,
     inbox: InboxComponent,
     events: Eventlist,
@@ -167,7 +215,7 @@ const PageContent = ({ page }) => {
 };
 
 const Candidatedashboard = () => {
-  const [activePage, setActivePage] = useState("home");
+  const [activePage, setActivePage] = useState("home"); // Set default page to "home"
 
   return (
     <div className="flex h-screen bg-gray-100">

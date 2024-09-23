@@ -1,217 +1,148 @@
-import React, { useState } from 'react';
-import { Search, ChevronDown, Menu } from 'lucide-react';
+import React from 'react';
+import { FaCalendarAlt, FaShareAlt, FaClipboardCheck } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Eventlist = () => {
-  const [selectedCategory, setSelectedCategory] = useState([]);
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-  const [showMediumDropdown, setShowMediumDropdown] = useState(false);
-  const [showDateDropdown, setShowDateDropdown] = useState(false);
-  const [showEmployerDropdown, setShowEmployerDropdown] = useState(false);
-  const [showMoreFiltersDropdown, setShowMoreFiltersDropdown] = useState(false);
 
-  const toggleCategoryDropdown = () => setShowCategoryDropdown(!showCategoryDropdown);
-  const toggleMediumDropdown = () => setShowMediumDropdown(!showMediumDropdown);
-  const toggleDateDropdown = () => setShowDateDropdown(!showDateDropdown);
-  const toggleEmployerDropdown = () => setShowEmployerDropdown(!showEmployerDropdown);
-  const toggleMoreFiltersDropdown = () => setShowMoreFiltersDropdown(!showMoreFiltersDropdown);
+    const events = [
+      {
+        id: 1,
+        title: 'Tech Careers Fair',
+        date: '2024-10-10T10:00:00',
+        time: '10:00 AM - 4:00 PM',
+        location: 'Virtual',
+        description: 'Join us for a day of networking with top tech companies.',
+        company: 'Tech Corp',
+      },
+      {
+        id: 2,
+        title: 'Resume Building Workshop',
+        date: '2024-10-15T14:00:00',
+        time: '2:00 PM - 4:00 PM',
+        location: 'Room 101, Main Building',
+        description: 'Learn how to craft an impactful resume.',
+        company: 'Career Center',
+      },
+      {
+        id: 3,
+        title: 'Career Development Seminar',
+        date: '2024-10-25T11:00:00',
+        time: '11:00 AM - 1:00 PM',
+        location: 'Online',
+        description: 'Explore career paths and development strategies.',
+        company: 'Growth Hub',
+      },
+      {
+        id: 4,
+        title: 'Job Interview Preparation',
+        date: '2024-10-30T15:00:00',
+        time: '3:00 PM - 5:00 PM',
+        location: 'Room 202, Main Building',
+        description: 'Get ready for your next big interview.',
+        company: 'Career Center',
+      },
+      {
+        id: 5,
+        title: 'Industry Networking Event',
+        date: '2024-11-02T17:00:00',
+        time: '5:00 PM - 8:00 PM',
+        location: 'City Hall',
+        description: 'Network with industry leaders and recruiters.',
+        company: 'Networking Group',
+      },
+      {
+        id: 6,
+        title: 'Workshop on LinkedIn',
+        date: '2024-11-05T13:00:00',
+        time: '1:00 PM - 3:00 PM',
+        location: 'Online',
+        description: 'Optimize your LinkedIn profile for job hunting.',
+        company: 'Social Media Experts',
+      },
+      {
+        id: 7,
+        title: 'Tech Innovation Expo',
+        date: '2024-11-10T10:00:00',
+        time: '10:00 AM - 4:00 PM',
+        location: 'Convention Center',
+        description: 'Showcase of the latest in tech innovations.',
+        company: 'Tech Industry',
+      },
+      {
+        id: 8,
+        title: 'Entrepreneurship Panel',
+        date: '2024-11-15T18:00:00',
+        time: '6:00 PM - 9:00 PM',
+        location: 'Community Center',
+        description: 'Learn from successful entrepreneurs.',
+        company: 'Business Network',
+      },
+      {
+        id: 9,
+        title: 'Diversity in the Workplace',
+        date: '2024-11-20T14:00:00',
+        time: '2:00 PM - 4:00 PM',
+        location: 'Main Auditorium',
+        description: 'Discuss the importance of diversity in the workplace.',
+        company: 'Inclusion Org',
+      },
+    ];
+  
 
-  const events = [
-    {
-      title: "Fall 2024 UCS Employer Meet & Greets",
-      date: "In-person · Thu, Sep 5-Thu, Nov 7",
-      type: "CAREER FAIR",
-      attendees: 57,
-      saved: false
-    },
-    {
-      title: "JOIN Sophomore Career Community (ASPIRE) Fall...",
-      date: "In-person · Mon, Aug 26-Fri, Nov 8",
-      type: "GUIDANCE",
-      attendees: 45,
-      saved: true
-    },
-    {
-      title: "Experience Pays: Learn and Earn Employer Panels",
-      date: "In-person · Tue, Sep 10-Tue, Sep 24",
-      type: "HIRING",
-      attendees: 127,
-      saved: false
+  const handleRSVP = (event) => {
+    alert(`You have RSVP'd for: ${event.title}`);
+  };
+
+  const handleShare = (event) => {
+    if (navigator.share) {
+      navigator.share({
+        title: event.title,
+        text: event.description,
+        url: window.location.href,
+      })
+      .then(() => console.log('Shared successfully'))
+      .catch((error) => console.error('Error sharing', error));
+    } else {
+      alert('Sharing not supported on this browser.');
     }
-  ];
-
-  const categories = [
-    "Career fair",
-    "Networking",
-    "Hiring",
-    "Employer info",
-    "Guidance",
-    "Academic",
-    "Conference",
-    "General"
-  ];
+  };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6">Upcoming Events</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.map((event) => (
+          <div key={event.id} className="bg-white p-4 rounded-lg shadow-lg">
+            <h2 className="font-bold text-xl">{event.title}</h2>
+            <p>
+              <FaCalendarAlt className="inline mr-2" />
+              {new Date(event.date).toLocaleDateString()} | {event.time}
+            </p>
+            <p>Location: {event.location}</p>
+            <Link to={`/event/${event.id}`} className="text-blue-500 hover:underline">
+              View Description
+            </Link>
+            <p>{event.description}</p>
+            <p>Organized by: {event.company}</p>
 
-
-      {/* Main content */}
-      <div className="flex-1 overflow-auto">
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-semibold text-gray-900">Events</h1>
-          </div>
-        </header>
-
-        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {/* Search and filters */}
-          <div className="mb-6">
-            <div className="relative">
-              <input type="text" placeholder="Search events" className="w-full pl-10 pr-4 py-2 border rounded-md" />
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
-            </div>
-
-            <div className="flex flex-wrap mt-4 space-x-2 space-y-2">
-              {/* Category Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={toggleCategoryDropdown}
-                  className="px-3 py-1 border rounded-md flex items-center justify-between w-full sm:w-auto"
-                >
-                  Category <ChevronDown size={16} className="ml-1" />
-                </button>
-                {showCategoryDropdown && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
-                    {categories.map((category, index) => (
-                      <div key={index} className="flex items-center mb-2 p-2">
-                        <input
-                          type="checkbox"
-                          id={`category-${index}`}
-                          className="mr-2"
-                          checked={selectedCategory.includes(category)}
-                          onChange={() => {
-                            setSelectedCategory((prev) =>
-                              prev.includes(category)
-                                ? prev.filter((c) => c !== category)
-                                : [...prev, category]
-                            );
-                          }}
-                        />
-                        <label htmlFor={`category-${index}`} className="text-gray-700">
-                          {category}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Medium Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={toggleMediumDropdown}
-                  className="px-3 py-1 border rounded-md flex items-center justify-between w-full sm:w-auto"
-                >
-                  Medium <ChevronDown size={16} className="ml-1" />
-                </button>
-                {showMediumDropdown && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
-                    <div className="flex items-center mb-2 p-2">
-                      <input type="checkbox" id="in-person" className="mr-2" />
-                      <label htmlFor="in-person" className="text-gray-700">In-person</label>
-                    </div>
-                    <div className="flex items-center p-2">
-                      <input type="checkbox" id="online" className="mr-2" />
-                      <label htmlFor="online" className="text-gray-700">Online</label>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Date Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={toggleDateDropdown}
-                  className="px-3 py-1 border rounded-md flex items-center justify-between w-full sm:w-auto"
-                >
-                  Date <ChevronDown size={16} className="ml-1" />
-                </button>
-                {showDateDropdown && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
-                    <div className="flex items-center mb-2 p-2">
-                      <input type="radio" id="today" name="date" className="mr-2" />
-                      <label htmlFor="today" className="text-gray-700">Today</label>
-                    </div>
-                    <div className="flex items-center mb-2 p-2">
-                      <input type="radio" id="tomorrow" name="date" className="mr-2" />
-                      <label htmlFor="tomorrow" className="text-gray-700">Tomorrow</label>
-                    </div>
-                    <div className="flex items-center p-2">
-                      <input type="radio" id="this-week" name="date" className="mr-2" />
-                      <label htmlFor="this-week" className="text-gray-700">This Week</label>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Employer Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={toggleEmployerDropdown}
-                  className="px-3 py-1 border rounded-md flex items-center justify-between w-full sm:w-auto"
-                >
-                  Employer <ChevronDown size={16} className="ml-1" />
-                </button>
-                {showEmployerDropdown && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
-                    <input type="text" placeholder="Search employers" className="w-full pl-2 py-1 border rounded-md p-2" />
-                  </div>
-                )}
-              </div>
-
-              {/* More Filters Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={toggleMoreFiltersDropdown}
-                  className="px-3 py-1 border rounded-md flex items-center justify-between w-full sm:w-auto"
-                >
-                  More filters <ChevronDown size={16} className="ml-1" />
-                </button>
-                {showMoreFiltersDropdown && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
-                    <div className="flex items-center mb-2 p-2">
-                      <input type="checkbox" id="paid" className="mr-2" />
-                      <label htmlFor="paid" className="text-gray-700">Paid</label>
-                    </div>
-                    <div className="flex items-center p-2">
-                      <input type="checkbox" id="internship" className="mr-2" />
-                      <label htmlFor="internship" className="text-gray-700">Internship</label>
-                    </div>
-                  </div>
-                )}
-              </div>
+            <div className="mt-4 flex space-x-2">
+              <button
+                onClick={() => handleRSVP(event)}
+                className="bg-blue-500 text-white rounded-lg px-4 py-2 text-lg"
+              >
+                RSVP
+                <FaClipboardCheck className="inline ml-1" />
+              </button>
+              <button
+                onClick={() => handleShare(event)}
+                className="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 text-lg"
+              >
+                Share
+                <FaShareAlt className="inline ml-1" />
+              </button>
             </div>
           </div>
-
-          {/* Events */}
-          <h2 className="text-2xl font-bold mb-4">All events</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {events.map((event, index) => (
-              <div key={index} className="bg-white p-4 rounded-md shadow-sm">
-                <h3 className="font-semibold">{event.title}</h3>
-                <p className="text-sm text-gray-600">{event.date}</p>
-                <div className="mt-2">
-                  <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">{event.type}</span>
-                </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{event.attendees} students going</span>
-                  <button className={`text-blue-600 ${event.saved ? 'font-bold' : ''}`}>
-                    {event.saved ? 'Saved' : 'Save'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </main>
+        ))}
       </div>
     </div>
   );

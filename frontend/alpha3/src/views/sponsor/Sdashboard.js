@@ -12,6 +12,19 @@ import alfalogo from "../../assets/alpfalogo.png";
 import Eventlist from ".././candidate/Eventlist";
 import CandidateList from "./Candidatelist";
 import ViewSponsorProfile from "./profile/ViewSponsorProfile";
+import { FaUser, FaList, FaCalendarAlt } from "react-icons/fa";
+// Updated SolutionCard Component
+const SolutionCard = ({ icon: Icon, title, description }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+    <div className="flex flex-col items-center text-center">
+      <div className="mb-4 text-blue-500">
+        <Icon size={48} />
+      </div>
+      <h2 className="text-xl font-bold mb-2">{title}</h2>
+      <p className="text-gray-600">{description}</p>
+    </div>
+  </div>
+);
 
 const SidebarItem = ({ icon: Icon, label, isActive, onClick }) => (
   <li
@@ -138,7 +151,33 @@ const Sidebar = ({ activePage, setActivePage }) => {
 
 const PageContent = ({ page }) => {
   const pageComponents = {
-    viewmyprofile: ViewSponsorProfile,
+    viewmyprofile: () => (
+      <div className="p-6 space-y-8">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Welcome to Your Candidate Dashboard!
+        </h1>
+
+        <h2 className="text-2xl font-bold text-center my-8">Features</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SolutionCard
+            icon={FaUser}
+            title="My Profile"
+            description="Manage your presence and interactions on the platform, showcasing your branding and sponsorship details to attract candidates. Update company information, track engagement metrics, and make informed decisions for future investments."
+          />
+          <SolutionCard
+            icon={FaList}
+            title="Candidate List"
+            description="Access an organized overview of registered candidates, with essential details to quickly identify those who align with your recruitment needs. Use filters and sorting options to refine your search based on criteria like location, skill set, or experience."
+          />
+          <SolutionCard
+            icon={FaCalendarAlt}
+            title="Career Fair Events"
+            description="Discover and participate in upcoming career fairs and networking events. Connect with candidates, showcase your company culture, and discuss job openings in a dynamic environment. Enhance visibility and attract top talent."
+          />
+        </div>
+      </div>
+    ),
     candidatelist: CandidateList,
     careerfairevents: Eventlist, // Link to Eventlist
     AiReviewer: AiReview,
