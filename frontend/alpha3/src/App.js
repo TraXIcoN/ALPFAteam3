@@ -9,11 +9,17 @@ import SponsorProfile from './views/sponsor/profile/SponsorProfile';
 import Profile from "./views/candidate/profile/Profile";
 import Typeformembed from "./views/candidate/profile/Typeformembed";
 import SponsorTypeformembed from "./views/sponsor/profile/sponsorTypeformembed";
+import Eventlist from "./views/candidate/Eventlist";
+import Candidatedashboard from "./views/candidate/Candidatedashboard";
+import Corspage from './views/signup/Corspage'; 
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/Corspage" element={<Corspage/>} />
+        <Route path="/Candidatedashboard" element={<Candidatedashboard/>} />
+        <Route path="/Eventlist" element={<Eventlist/>} />
         <Route path="/Typeformembed" element={<Typeformembed/>} />
         <Route path="/Profile" element={<Profile/>} />
         <Route path="/" element={<LandingPage />} />
