@@ -12,7 +12,8 @@ from .serializers import CandidateSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+import spacy
+nlp = spacy.load("en_core_web_lg")
 #Landing page
 def home(request):
     return render(request, 'my_app/home.html')
