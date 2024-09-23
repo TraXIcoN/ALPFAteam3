@@ -1,7 +1,54 @@
 {% extends "my_app/base.html" %}
 
-{% block title %}Create a Profile{% endblock %}
+{% block title %}Sponsor Profile for {{ sponsor.org_name }}{% endblock %}
 
 {% block content %}
-<h1>Create a profile</h1>
+<h1>Company Profile: {{ sponsor.org_name }}</h1>
+
+<h2>Basic Company Info</h2>
+<p>Industry: {{ sponsor.industry }}</p>
+<p>Website: <a href="{{ sponsor.website }}">{{ sponsor.website }}</a></p>
+<p>Company Size: {{ sponsor.get_size_display }}</p>
+<p>Headquarters: {{ sponsor.headquarters }}</p>
+<p>Office Locations: {{ sponsor.office_locations|default:"N/A" }}</p>
+
+<h2>Job Listings</h2>
+<h3>Roles Offered</h3>
+<p>{{ sponsor.roles_offered|default:"No roles listed." }}</p>
+
+<h3>Required Skills</h3>
+<p>{{ sponsor.required_skills|default:"No required skills listed." }}</p>
+
+<h3>Preferred Skills</h3>
+<p>{{ sponsor.preferred_skills|default:"No preferred skills listed." }}</p>
+
+<h2>Organization Culture</h2>
+<h3>Cultural Fit</h3>
+<p>{{ sponsor.culture_fit|default:"No information on culture fit." }}</p>
+
+<h3>Diversity Initiatives</h3>
+<p>{{ sponsor.diversity_initiatives|default:"No diversity initiatives listed." }}</p>
+
+<h3>Work Environment</h3>
+<p>{{ sponsor.get_work_environment_display }}</p>
+
+<h2>Skills Required</h2>
+<h3>Technical Skills Needed</h3>
+<p>{{ sponsor.technical_skills_needed|default:"No technical skills listed." }}</p>
+
+<h3>Soft Skills Needed</h3>
+<p>{{ sponsor.soft_skills_needed|default:"No soft skills listed." }}</p>
+
+<h2>Preferences</h2>
+<p>Candidate Education Preference: {{ sponsor.candidate_education_preference|default:"No preference listed." }}</p>
+<p>Experience Range: {{ sponsor.get_experience_range_display }}</p>
+
+<h2>Company Growth Opportunities</h2>
+<p>{{ sponsor.growth_opportunities|default:"No growth opportunities listed." }}</p>
+<p>{{ sponsor.mentorship_opportunities|default:"No mentorship opportunities listed." }}</p>
+
+<h2>Event-Specific Preferences</h2>
+<p>Flexibility in Matching: {{ sponsor.flexibility_in_matching|yesno:"Yes,No" }}</p>
+
+<a href="{% url 'edit_sponsor_profile'  %}">Edit Profile</a>
 {% endblock %}

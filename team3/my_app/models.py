@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import spacy 
 
 class Candidate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -13,6 +14,8 @@ class Candidate(models.Model):
     job_title = models.CharField(max_length=255)
     industry = models.CharField(max_length=255)
     years_of_experience = models.IntegerField()
+    role_level = models.CharField(max_length=50, choices=[
+        ('interns', "Internships"), ('entrylevel', "Entry Level/Graduate"),('junior', 'Junior (1-2 Years)'), ('mid_level', 'Mid-Level (3-4 Yeara)'), ('senior', 'Senior (5-8 Years)'), ('expert', "Expert & Leadership (9+ Years)")])
 
     #education
     degree = models.CharField(max_length=255)
@@ -33,7 +36,13 @@ class Candidate(models.Model):
 
     # Cultural & Value Fit
     values = models.TextField(blank=True, null=True)
-    team_preferences = models.TextField(blank=True, null=True)
+    team_preferences = models.CharField(max_length=50, choices=[
+        ('1-20', '1-20'),
+        ('20-100', '20-100'),
+        ('100-200', '100-200'),
+        ('200-500', '200-500'),
+        ('500-1000', '500-1000'),
+        ('1000+', '1000+')])  
 
     #Location Preferences
     location_preference = models.CharField(max_length=255)
@@ -50,11 +59,18 @@ class Candidate(models.Model):
 #need to add candidates preferred org size
 
 class Sponsor(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     # Basic company info
-    company_name = models.CharField(max_length=255)
+    org_name = models.CharField(max_length=255)
     industry = models.CharField(max_length=255)
     website = models.URLField()
-    size = models.IntegerField()  
+    size = models.CharField(max_length=50, choices=[
+        ('1-20', '1-20'),
+        ('20-100', '20-100'),
+        ('100-200', '100-200'),
+        ('200-500', '200-500'),
+        ('500-1000', '500-1000'),
+        ('1000+', '1000+')])  
     headquarters = models.CharField(max_length=255)
     office_locations = models.TextField(blank=True, null=True)
 
@@ -76,7 +92,7 @@ class Sponsor(models.Model):
     #preferences
     candidate_education_preference = models.CharField(max_length=255, blank=True, null=True)
     experience_range = models.CharField(max_length=50, choices=[
-        ('junior', 'Junior'), ('mid_level', 'Mid-Level'), ('senior', 'Senior')])
+        ('interns', "Internships"), ('entrylevel', "Entry Level/Graduate"),('junior', 'Junior (1-2 Years)'), ('mid_level', 'Mid-Level (3-4 Yeara)'), ('senior', 'Senior (5-8 Years)'), ('expert', "Expert & Leadership (9+ Years)")])
 
     #Company Growth
     growth_opportunities = models.TextField(blank=True, null=True)
@@ -86,4 +102,4 @@ class Sponsor(models.Model):
     flexibility_in_matching = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.company_name
+        return self.org_name
