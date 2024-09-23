@@ -1,30 +1,35 @@
 css = '''
 <style>
 .chat-message {
-    padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex
+    padding: 1.5rem; 
+    border-radius: 0.5rem; 
+    margin-bottom: 1rem; 
+    display: flex;
+    background-color: #f9f9f9; /* Light cream background */
 }
 .chat-message.user {
-    align: right,
-    background-color: #2b313e
+    background-color: #ffffff; /* White background for user messages */
 }
 .chat-message.bot {
-    background-color: #475063
+    background-color: #f0e68c; /* Light cream background for bot messages */
 }
 .chat-message .avatar {
-  width: 20%;
+    width: 20%;
 }
 .chat-message .avatar img {
-  max-width: 78px;
-  max-height: 78px;
-  border-radius: 50%;
-  object-fit: cover;
+    max-width: 78px;
+    max-height: 78px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 .chat-message .message {
-  width: 80%;
-  padding: 0 1.5rem;
-  color: #fff;
+    width: 80%;
+    padding: 0 1.5rem;
+    color: #333; /* Darker text color for better contrast */
 }
+</style>
 '''
+
 bot_template = '''
 <div class="chat-message bot">
     <div class="avatar">

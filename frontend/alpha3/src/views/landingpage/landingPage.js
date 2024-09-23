@@ -1,63 +1,196 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "../login/Login";
-import Signup from "../signup/SpoSignup";
-import NavBar from "../../components/navbar/NavBar"; // Import your existing NavBar component
-import "./landingpage.css"; // Import CSS for App styling
-import heroImage from "../../assets/hero-image.png"; // Replace with your hero image
-// import logo from './assets/logo.png'; // Replace with your logo image
+import {
+  ArrowRightIcon,
+  UserIcon,
+  BriefcaseIcon,
+  LightbulbIcon,
+} from "lucide-react";
+import alpfalogo from "../../assets/alpfalogo.png";
 
-function LandingPage() {
+const Landingpage = () => {
   return (
-    <div className="App">
-      <NavBar /> {/* Keep the NavBar as is */}
+    <div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-blue-600 text-white">
+        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div className="flex items-center">
+            {/* Bigger Logo beside Latino Link */}
+            <img
+              src={alpfalogo}
+              alt="Latino Link Logo"
+              className="h-16 w-16 mr-2"
+            />
+            <h1 className="text-3xl font-bold">Latino Link</h1>
+          </div>
+          <nav>
+            <ul className="flex space-x-4">
+              <li>
+                <a href="#about" className="hover:text-blue-200">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="/Login" className="hover:text-blue-200">
+                  Login
+                </a>
+              </li>
+              <li>
+                <a href="/admin" className="hover:text-blue-200">
+                  Admin Login
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/Signup"
+                  className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100"
+                >
+                  Sign Up
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <section className="hero-section">
-        <img src={heroImage} alt="Hero Background" className="hero-image" />
-        <div className="hero-content">
-          {/* <h1>divERGe</h1> */}
-          {/* <p>ERG TRAINING PROGRAM</p> */}
-        </div>
-        {/* <img src={logo} alt="ALPFA Logo" className="hero-logo" /> */}
-      </section>
-      {/* Purpose Section */}
-      <section className="purpose-section">
-        <h2>ALPFA'S PURPOSE</h2>
-        <p>Connecting Latino Leaders for Impact</p>
-      </section>
-      {/* Card Section (Find Chapter, Membership, Events, Partners) */}
-      <section className="highlights-section">
-        <div className="highlight-card">
-          <h3>Find Your Chapter</h3>
-          <p>
-            ALPFA chapters offer professional development and career-building
-            opportunities. Find the chapter closest to you and stay connected!
+      <section className="bg-blue-700 text-white py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-4">
+            Revolutionizing Job Matching for Latino Link Members
+          </h2>
+          <p className="text-xl mb-8">
+            Connecting qualified candidates with the right opportunities
+            efficiently and effectively.
           </p>
-        </div>
-        <div className="highlight-card">
-          <h3>Membership</h3>
-          <p>
-            Get access to best practice guides and opportunities to leaders at
-            all levels of their careers from college to senior professionals.
-          </p>
-        </div>
-        <div className="highlight-card">
-          <h3>Events</h3>
-          <p>
-            ALPFA gives you a front row seat to some of the biggest events in
-            the Latino community. Don’t miss our Annual Convention!
-          </p>
-        </div>
-        <div className="highlight-card">
-          <h3>Partners</h3>
-          <p>
-            Interested in becoming a partner? Learn more about how you can get
-            involved and support ALPFA's mission.
-          </p>
+          <a
+            href="#learn-more"
+            className="bg-white text-blue-700 px-6 py-3 rounded-full font-bold hover:bg-blue-100 inline-flex items-center"
+          >
+            Learn More <ArrowRightIcon className="ml-2 h-5 w-5" />
+          </a>
         </div>
       </section>
+
+      {/* Features Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <h3 className="text-3xl font-bold text-center mb-12">Our Solution</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FeatureCard
+              icon={<UserIcon className="h-12 w-12 text-blue-600" />}
+              title="Tailored Recommendations"
+              description="Provide personalized job matches for members and candidate suggestions for sponsors."
+            />
+            <FeatureCard
+              icon={<BriefcaseIcon className="h-12 w-12 text-blue-600" />}
+              title="Event-Specific Matching"
+              description="Optimize matching for both sponsor-specific events and career fairs."
+            />
+            <FeatureCard
+              icon={<LightbulbIcon className="h-12 w-12 text-blue-600" />}
+              title="Holistic Profiling"
+              description="Consider both professional skills and human aspects for comprehensive matching."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Event Types Section */}
+      <section className="bg-gray-200 py-20">
+        <div className="container mx-auto px-4">
+          <h3 className="text-3xl font-bold text-center mb-12">Event Types</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <EventTypeCard
+              title="Sponsor Specific Events"
+              sponsorNeed="Needs matching profiles"
+              memberBenefit="Invited if adequately matching the offer"
+            />
+            <EventTypeCard
+              title="Career Fair Style Events"
+              sponsorNeed="Prefer matching profiles"
+              memberBenefit="Ranked list of likely interested sponsors"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* About Us Section */}
+      <section
+        id="about"
+        className="bg-gray-100 py-12 px-6 md:px-12 lg:px-24 text-center"
+      >
+        <h2 className="text-4xl font-bold text-gray-800 mb-6">
+          About Latino Link
+        </h2>
+        <p className="text-lg text-gray-700 mb-6">
+          At Latino Link, we are committed to bridging the gap between talented
+          professionals and corporate sponsors. Our goal is to create meaningful
+          connections that help both our members and sponsors thrive. Through
+          our tailored approach, we ensure that our members find the best career
+          opportunities and that sponsors connect with qualified, passionate
+          individuals.
+        </p>
+        <p className="text-lg text-gray-700 mb-6">
+          We understand that job matching is more than just aligning skills and
+          experience — it’s about human connection, shared goals, and mutual
+          growth. Whether you’re a sponsor looking for the right candidates or a
+          professional seeking the right role, we’re here to make that process
+          seamless and rewarding.
+        </p>
+        <p className="text-lg text-gray-700">
+          With our innovative platform, we enhance your experience by providing
+          personalized recommendations and guiding you to the opportunities that
+          truly matter. Join us and be part of a community that values both
+          professional and personal growth.
+        </p>
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-blue-600 text-white py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h3 className="text-3xl font-bold mb-4">
+            Ready to Enhance Your Job Matching Experience?
+          </h3>
+          <p className="text-xl mb-8">
+            Join Latino Link today and connect with the right opportunities!
+          </p>
+          <a
+            href="/signup"
+            className="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-100"
+          >
+            Sign Up Now
+          </a>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p>&copy; 2024 Latino Link. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
-}
+};
 
-export default LandingPage;
+const FeatureCard = ({ icon, title, description }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md text-center">
+    <div className="flex justify-center mb-4">{icon}</div>
+    <h4 className="text-xl font-bold mb-2">{title}</h4>
+    <p>{description}</p>
+  </div>
+);
+
+const EventTypeCard = ({ title, sponsorNeed, memberBenefit }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md">
+    <h4 className="text-xl font-bold mb-4">{title}</h4>
+    <p className="mb-2">
+      <strong>Sponsors:</strong> {sponsorNeed}
+    </p>
+    <p>
+      <strong>Members:</strong> {memberBenefit}
+    </p>
+  </div>
+);
+
+export default Landingpage;

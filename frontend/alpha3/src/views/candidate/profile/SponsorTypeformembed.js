@@ -33,10 +33,10 @@ axios.interceptors.request.use(
 
 const steps = [
   {
-    question: "What is your full name?",
+    question: "What is your company's website?",
     input: (value, onChange) => (
       <TextField
-        label="Full Name"
+        label="Company Website"
         variant="outlined"
         value={value || ""}
         onChange={onChange}
@@ -45,43 +45,7 @@ const steps = [
     ),
   },
   {
-    question: "What is your contact information?",
-    input: (value, onChange) => (
-      <TextField
-        label="Contact Info"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What is your LinkedIn profile URL?",
-    input: (value, onChange) => (
-      <TextField
-        label="LinkedIn Profile"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What is your portfolio URL?",
-    input: (value, onChange) => (
-      <TextField
-        label="Portfolio"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What is your current job title?",
+    question: "What is the job title for the role offered?",
     input: (value, onChange) => (
       <TextField
         label="Job Title"
@@ -93,10 +57,29 @@ const steps = [
     ),
   },
   {
-    question: "What industry do you work in?",
+    question:
+      "What is your work environment like (e.g., in-office, remote, hybrid)?",
     input: (value, onChange) => (
       <TextField
-        label="Industry"
+        select
+        label="Work Environment"
+        value={value || ""}
+        onChange={onChange}
+        fullWidth
+      >
+        {["In-office", "Remote", "Hybrid"].map((environment) => (
+          <MenuItem key={environment} value={environment}>
+            {environment}
+          </MenuItem>
+        ))}
+      </TextField>
+    ),
+  },
+  {
+    question: "What is the salary range for this role?",
+    input: (value, onChange) => (
+      <TextField
+        label="Salary Range"
         variant="outlined"
         value={value || ""}
         onChange={onChange}
@@ -105,214 +88,83 @@ const steps = [
     ),
   },
   {
-    question: "How many years of experience do you have?",
+    question: "What roles are currently open in your organization?",
     input: (value, onChange) => (
-      <TextField
-        label="Years of Experience"
-        variant="outlined"
-        type="number"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What is your highest level of education?",
-    input: (value, onChange) => (
-      <TextField
-        label="Degree"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What certification do you have (if any)?",
-    input: (value, onChange) => (
-      <TextField
-        label="Certification"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What institution did you graduate from?",
-    input: (value, onChange) => (
-      <TextField
-        label="Institution"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What year did you graduate?",
-    input: (value, onChange) => (
-      <TextField
-        label="Graduation Year"
-        variant="outlined"
-        type="number"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What are your technical skills?",
-    input: (value, onChange) => (
-      <TextField
-        label="Technical Skills"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-        multiline
-        rows={4}
-      />
-    ),
-  },
-  {
-    question: "What are your soft skills?",
-    input: (value, onChange) => (
-      <TextField
-        label="Soft Skills"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-        multiline
-        rows={4}
-      />
-    ),
-  },
-  {
-    question: "What is your preferred industry?",
-    input: (value, onChange) => (
-      <TextField
-        label="Preferred Industry"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What is your preferred role?",
-    input: (value, onChange) => (
-      <TextField
-        label="Preferred Role"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "What is your preferred work environment?",
-    input: (value, onChange) => (
-      <RadioGroup value={value || ""} onChange={onChange}>
-        {["Remote", "In-office", "Hybrid"].map((env) => (
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Open Roles</FormLabel>
+        {[
+          "Finance",
+          "Technology",
+          "Healthcare",
+          "Consulting",
+          "Marketing & Advertising",
+          "Other",
+        ].map((role) => (
           <FormControlLabel
-            key={env}
-            value={env}
-            control={<Radio />}
-            label={env}
+            key={role}
+            control={
+              <Checkbox
+                checked={Array.isArray(value) && value.includes(role)}
+                onChange={(event) => {
+                  const newValue = event.target.checked
+                    ? [...(value || []), role]
+                    : value.filter((item) => item !== role);
+                  onChange(newValue);
+                }}
+                name={role}
+              />
+            }
+            label={role}
           />
         ))}
-      </RadioGroup>
+      </FormControl>
     ),
   },
   {
-    question: "What are your career goals?",
+    question:
+      "What technical skills are required for the roles you're offering?",
     input: (value, onChange) => (
-      <TextField
-        label="Career Goals"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-        multiline
-        rows={4}
-      />
-    ),
-  },
-  {
-    question: "What are your values?",
-    input: (value, onChange) => (
-      <TextField
-        label="Values"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-        multiline
-        rows={4}
-      />
-    ),
-  },
-  {
-    question: "What are your team preferences?",
-    input: (value, onChange) => (
-      <TextField
-        label="Team Preferences"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-        multiline
-        rows={4}
-      />
-    ),
-  },
-  {
-    question: "What is your location preference?",
-    input: (value, onChange) => (
-      <TextField
-        label="Location Preference"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
-      />
-    ),
-  },
-  {
-    question: "Are you open to relocation?",
-    input: (value, onChange) => (
-      <RadioGroup value={value || ""} onChange={onChange}>
-        {["Yes", "No"].map((option) => (
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Required Technical Skills</FormLabel>
+        {[
+          "Communication",
+          "Problem-solving",
+          "Leadership",
+          "Teamwork",
+          "Creativity",
+          "Adaptability",
+        ].map((skill) => (
           <FormControlLabel
-            key={option}
-            value={option}
-            control={<Radio />}
-            label={option}
+            key={skill}
+            control={
+              <Checkbox
+                checked={Array.isArray(value) && value.includes(skill)}
+                onChange={(event) => {
+                  const newValue = event.target.checked
+                    ? [...(value || []), skill]
+                    : value.filter((item) => item !== skill);
+                  onChange(newValue);
+                }}
+                name={skill}
+              />
+            }
+            label={skill}
           />
         ))}
-      </RadioGroup>
+      </FormControl>
     ),
   },
   {
-    question: "What is your availability?",
+    question: "What is your preferred range of experience for candidates?",
     input: (value, onChange) => (
       <RadioGroup value={value || ""} onChange={onChange}>
-        {["Full-time", "Part-time", "Internship", "Contract"].map(
-          (availability) => (
+        {["Entry-level", "Mid-level", "Senior-level", "Executive-level"].map(
+          (level) => (
             <FormControlLabel
-              key={availability}
-              value={availability}
+              key={level}
+              value={level}
               control={<Radio />}
-              label={availability}
+              label={level}
             />
           )
         )}
@@ -320,28 +172,49 @@ const steps = [
     ),
   },
   {
-    question: "Any endorsements or recommendations?",
+    question:
+      "Are there any specific company benefits you'd like to highlight?",
+    input: (value, onChange) => (
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Company Benefits</FormLabel>
+        {[
+          "Health Insurance",
+          "401(k) Matching",
+          "Flexible Work Hours",
+          "Other",
+        ].map((benefit) => (
+          <FormControlLabel
+            key={benefit}
+            control={
+              <Checkbox
+                checked={Array.isArray(value) && value.includes(benefit)}
+                onChange={(event) => {
+                  const newValue = event.target.checked
+                    ? [...(value || []), benefit]
+                    : value.filter((item) => item !== benefit);
+                  onChange(newValue);
+                }}
+                name={benefit}
+              />
+            }
+            label={benefit}
+          />
+        ))}
+      </FormControl>
+    ),
+  },
+  {
+    question:
+      "Does your company offer any growth opportunities for employees? If yes, please describe.",
     input: (value, onChange) => (
       <TextField
-        label="Endorsements"
+        label="Growth Opportunities"
         variant="outlined"
         value={value || ""}
         onChange={onChange}
         fullWidth
         multiline
         rows={4}
-      />
-    ),
-  },
-  {
-    question: "What is your preferred organization size?",
-    input: (value, onChange) => (
-      <TextField
-        label="Preferred Organization Size"
-        variant="outlined"
-        value={value || ""}
-        onChange={onChange}
-        fullWidth
       />
     ),
   },

@@ -6,6 +6,7 @@ import {
   Calendar,
   Building,
   View,
+  PenBox,
 } from "lucide-react";
 import alfalogo from "../../assets/alpfalogo.png"; // Import your logo here
 import Eventlist from "./Eventlist"; // Ensure this is the correct path for Eventlist
@@ -30,11 +31,11 @@ const SidebarItem = ({ icon: Icon, label, isNew, isActive, onClick }) => (
 
 const Sidebar = ({ activePage, setActivePage }) => {
   const menuItems = [
-    { icon: Home, label: "Home", path: "home" },
     { icon: CircleUserRoundIcon, label: "My Profile", path: "viewmyprofile" },
     { icon: Inbox, label: "Inbox", path: "inbox" },
     { icon: Calendar, label: "Events", path: "events" }, // Update path to match the key in PageContent
     { icon: Building, label: "Sponsors", path: "sponsors" },
+    { icon: PenBox, label: "AiReview", path: "AiReview" },
   ];
 
   return (
@@ -61,13 +62,44 @@ const Sidebar = ({ activePage, setActivePage }) => {
   );
 };
 
+const AiReview = () => (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh", // Full viewport height
+      textAlign: "center",
+    }}
+  >
+    <div>
+      <h5 style={{ paddingBottom: 50 }}>Welcome to the AI Console</h5>
+      <a
+        href="http://localhost:8501"
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          color: "white",
+          backgroundColor: "#1976d2",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          textDecoration: "none",
+        }}
+      >
+        Click here to access the AI console
+      </a>
+    </div>
+  </div>
+);
+
 const PageContent = ({ page }) => {
   const pageComponents = {
-    home: () => <div>Home Page Content</div>,
     viewmyprofile: ViewProfile,
     inbox: () => <div>Inbox Page Content</div>,
     events: Eventlist, // Directly reference the imported Eventlist component
     sponsors: () => <div>Employers Page Content</div>,
+    AiReview: AiReview,
   };
 
   const PageComponent =
