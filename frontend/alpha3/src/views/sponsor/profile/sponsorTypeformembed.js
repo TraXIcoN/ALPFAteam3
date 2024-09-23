@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
   Typography,
+  Paper,
   LinearProgress,
 } from '@mui/material';
 
@@ -188,100 +189,90 @@ const SponsorTypeformembed = () => {
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
 
   return (
-    <Container
-      maxWidth="sm"
+    <Box
       sx={{
-        backgroundColor: '#ffffff',
-        borderRadius: 4,
-        padding: 4,
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-        mt: 6,
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(150deg, #7795f8 15%, #6772e5 70%, #555abf 94%)',
+        padding: 3,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      <LinearProgress
-        variant="determinate"
-        value={(step / steps.length) * 100}
-        sx={{
-          mb: 3,
-          height: 10,
-          borderRadius: 5,
-          backgroundColor: '#e0e0e0',
-          '& .MuiLinearProgress-bar': {
-            borderRadius: 5,
-            backgroundColor: '#1976d2',
-          },
-        }}
-      />
-      <Box sx={{ mt: 2 }}>
-        <Typography
-          variant="h5"
-          align="center"
-          gutterBottom
+      {/* Background circles */}
+      {[...Array(5)].map((_, i) => (
+        <Box
+          key={i}
           sx={{
-            fontWeight: 600,
-            color: '#333333',
-            letterSpacing: '0.5px',
+            position: 'absolute',
+            width: `${Math.random() * 300 + 100}px`,
+            height: `${Math.random() * 300 + 100}px`,
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            transform: 'translate(-50%, -50%)',
           }}
-        >
-          {steps[step].question}
-        </Typography>
-        {steps[step].input(formData[step], handleChange(step))}
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-          {step > 0 && (
-            <Button
-              variant="outlined"
-              onClick={prevStep}
-              sx={{
-                px: 3,
-                py: 1,
-                borderRadius: 50,
-                textTransform: 'none',
-                borderColor: '#1976d2',
-                color: '#1976d2',
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                  borderColor: '#1565c0',
-                },
-              }}
-            >
-              Previous
-            </Button>
-          )}
-          {step < steps.length - 1 ? (
-            <Button
-              variant="contained"
-              onClick={nextStep}
-              sx={{
-                px: 3,
-                py: 1,
-                borderRadius: 50,
-                backgroundColor: '#1976d2',
-                color: '#fff',
-                textTransform: 'none',
-                '&:hover': {
-                  backgroundColor: '#1565c0',
-                },
-              }}
-            >
-              Next
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                px: 3,
-                py: 1,
-                borderRadius: 50,
-                textTransform: 'none',
-              }}
-            >
-              Submit
-            </Button>
-          )}
-        </Box>
-      </Box>
-    </Container>
+        />
+      ))}
+
+      {/* Header */}
+      <Typography variant="h3" sx={{ color: 'white', mb: 4, fontWeight: 'bold', textAlign: 'center' }}>
+        Profile
+      </Typography>
+
+      {/* Main content */}
+      <Paper
+        elevation={3}
+        sx={{
+          width: '100%',
+          maxWidth: 600,
+          borderRadius: 4,
+          overflow: 'hidden',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        }}
+      >
+        <LinearProgress
+          variant="determinate"
+          value={(step / (steps.length - 1)) * 100}
+          sx={{ height: 16, backgroundColor: 'rgba(0, 0, 0, 0.1)', '& .MuiLinearProgress-bar': { backgroundColor: 'green' } }}
+        />
+        <Container maxWidth="sm" sx={{ py: 4 }}>
+          <Typography
+            variant="h6"
+            align="center"
+            gutterBottom
+            sx={{
+              fontWeight: 600,
+              color: '#32325d',
+              mb: 3,
+            }}
+          >
+            {steps[step].question}
+          </Typography>
+          {steps[step].input(formData[step], handleChange(step))}
+          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+            {step > 0 && (
+              <Button variant="outlined" onClick={prevStep}>
+                Previous
+              </Button>
+            )}
+            {step < steps.length - 1 ? (
+              <Button variant="contained" onClick={nextStep}>
+                Next
+              </Button>
+            ) : (
+              <Button variant="contained" color="success">
+                Submit
+              </Button>
+            )}
+          </Box>
+        </Container>
+      </Paper>
+    </Box>
   );
 };
 
