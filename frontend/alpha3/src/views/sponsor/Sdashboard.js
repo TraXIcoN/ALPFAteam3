@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import alfalogo from "../../assets/alpfalogo.png";
 import Eventlist from ".././candidate/Eventlist";
+import CandidateList from "./Candidatelist";
 import ViewSponsorProfile from "./profile/ViewSponsorProfile";
-import { DoorBack } from "@mui/icons-material";
 
 const SidebarItem = ({ icon: Icon, label, isActive, onClick }) => (
   <li
@@ -73,7 +73,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
     { icon: CircleUserRoundIcon, label: "My Profile", path: "viewmyprofile" },
     { icon: List, label: "Candidate List", path: "candidatelist" },
     { icon: Calendar, label: "Career Fair Events", path: "careerfairevents" },
-    { icon: PenBox, label: "Career Fair Events", path: "AiReviewer" },
+    { icon: PenBox, label: "AiReviewer", path: "AiReviewer" },
     { icon: DoorOpen, label: "Logout", path: "logout" },
   ];
 
@@ -139,7 +139,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
 const PageContent = ({ page }) => {
   const pageComponents = {
     viewmyprofile: ViewSponsorProfile,
-    candidatelist: () => <div>Candidate List Page Content</div>,
+    candidatelist: CandidateList,
     careerfairevents: Eventlist, // Link to Eventlist
     AiReviewer: AiReview,
     logout: logout,
