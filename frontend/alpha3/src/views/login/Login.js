@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   Container,
   TextField,
@@ -17,6 +18,7 @@ import alpfalogo from "../../assets/alpfalogo.png";
 import axios from "axios";
 
 const Login = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -49,16 +51,17 @@ const Login = () => {
         loginData
       );
 
-      // Assuming the response contains the user data
+      // Assuming the response contains the user data and token
       const { username, token } = response.data; // Adjust based on your API response structure
 
       // Store the token and username in local storage
       localStorage.setItem("authToken", token);
       localStorage.setItem("username", username); // Store the username
 
-      console.log("Logged in username:", username); // Log the username
-      alert("Login successful!"); // You can redirect or store user info here
-      // Redirect or update state as needed
+      console.log("Logged in username:", username);
+
+      // Navigate to CandidateDashboard after successful login
+      navigate("/CandidateDashboard"); // Redirect to CandidateDashboard
     } catch (error) {
       console.error("Error logging in:", error);
       alert(

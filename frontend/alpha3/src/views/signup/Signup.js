@@ -51,8 +51,10 @@ const Signup = () => {
       );
 
       console.log("User created:", response.data);
-      // Redirect to profile page after successful signup
-      navigate("/Profile");
+      alert("Signup successful! You can now log in.");
+
+      // Redirect to CandidateDashboard after successful signup
+      navigate("/CandidateDashboard"); // Redirect to CandidateDashboard
     } catch (error) {
       console.error("Error creating user:", error);
       alert(
