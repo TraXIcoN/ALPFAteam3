@@ -11,7 +11,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Cookies from "js-cookie"; // Import js-cookie to handle CSRF token
 
-const Signup = () => {
+const CanSignup = () => {
   const navigate = useNavigate(); // Initialize useNavigate
   const [formData, setFormData] = useState({
     username: "",
@@ -51,8 +51,10 @@ const Signup = () => {
       );
 
       console.log("User created:", response.data);
-      // Redirect to Corspage after successful signup
-      navigate("/Corspage");
+      alert("Signup successful! You can now log in.");
+
+      // Redirect to Typeformembed after successful signup
+      navigate("/Typeformembed"); // Redirect to Typeformembed
     } catch (error) {
       console.error("Error creating user:", error);
       alert(
@@ -137,4 +139,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default CanSignup;

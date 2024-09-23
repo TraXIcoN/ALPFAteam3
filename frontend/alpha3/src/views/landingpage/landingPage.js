@@ -1,5 +1,10 @@
-import React from 'react';
-import { ArrowRightIcon, UserIcon, BriefcaseIcon, LightbulbIcon } from 'lucide-react';
+import React from "react";
+import {
+  ArrowRightIcon,
+  UserIcon,
+  BriefcaseIcon,
+  LightbulbIcon,
+} from "lucide-react";
 import alpfalogo from "../../assets/alpfalogo.png";
 
 const Landingpage = () => {
@@ -146,8 +151,12 @@ const FeatureCard = ({ icon, title, description }) => (
 const EventTypeCard = ({ title, sponsorNeed, memberBenefit }) => (
   <div className="bg-white p-6 rounded-lg shadow-md">
     <h4 className="text-xl font-bold mb-4">{title}</h4>
-    <p className="mb-2"><strong>Sponsors:</strong> {sponsorNeed}</p>
-    <p><strong>Members:</strong> {memberBenefit}</p>
+    <p className="mb-2">
+      <strong>Sponsors:</strong> {sponsorNeed}
+    </p>
+    <p>
+      <strong>Members:</strong> {memberBenefit}
+    </p>
   </div>
 );
 
