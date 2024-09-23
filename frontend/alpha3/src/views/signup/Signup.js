@@ -9,16 +9,16 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import Cookies from "js-cookie"; // Import js-cookie to handle CSRF token
 
 const Signup = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-
-  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,14 +34,25 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/api/signup/", {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      });
+      const csrfToken = Cookies.get("csrftoken"); // Get CSRF token from cookies
+      const response = await axios.post(
+        "http://localhost:8000/api/signup/",
+        {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          headers: {
+            "X-CSRFToken": csrfToken, // Include CSRF token in the headers
+            "Content-Type": "application/json", // Set content type
+          },
+        }
+      );
+
       console.log("User created:", response.data);
-      // Redirect to login page after successful signup
-      navigate("/Profile"); // Use navigate to redirect to the login page
+      // Redirect to profile page after successful signup
+      navigate("/Profile");
     } catch (error) {
       console.error("Error creating user:", error);
       alert(
