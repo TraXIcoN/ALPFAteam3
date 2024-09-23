@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "../login/Login";
-import Signup from "../signup/Signup";
+import Signup from "../signup/SpoSignup";
 import NavBar from "../../components/navbar/NavBar"; // Import your existing NavBar component
 import "./landingpage.css"; // Import CSS for App styling
 import heroImage from "../../assets/hero-image.png"; // Replace with your hero image

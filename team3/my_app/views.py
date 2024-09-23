@@ -73,9 +73,35 @@ def candidate_profile(request):
     if request.method == 'GET':
         try:
             candidate = Candidate.objects.get(user=request.user)
-            return render(request, 'my_app/candidate/candidate_profile.html', {'candidate': candidate})
+            # Prepare the response data
+            response_data = {
+                'name': candidate.name,
+                'contact_info': candidate.contact_info,
+                'linkedin_profile': candidate.linkedin_profile,
+                'portfolio': candidate.portfolio,
+                'job_title': candidate.job_title,
+                'industry': candidate.industry,
+                'years_of_experience': candidate.years_of_experience,
+                'degree': candidate.degree,
+                'certification': candidate.certification,
+                'institution': candidate.institution,
+                'graduation_year': candidate.graduation_year,
+                'technical_skills': candidate.technical_skills,
+                'soft_skills': candidate.soft_skills,
+                'preferred_industry': candidate.preferred_industry,
+                'preferred_role': candidate.preferred_role,
+                'preferred_work_environment': candidate.preferred_work_environment,
+                'career_goals': candidate.career_goals,
+                'values': candidate.values,
+                'team_preferences': candidate.team_preferences,
+                'location_preference': candidate.location_preference,
+                'relocation_open': candidate.relocation_open,
+                'availability': candidate.availability,
+                'endorsements': candidate.endorsements,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
         except Candidate.DoesNotExist:
-            return JsonResponse({'error': 'Candidate profile does not exist.'}, status=404)
+            return Response({'error': 'Candidate profile does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
     elif request.method == 'POST':
         # Convert incoming data to a dictionary
@@ -122,24 +148,60 @@ def candidate_profile(request):
             candidate = form.save(commit=False)
             candidate.user = request.user  # Link the user to the candidate
             candidate.save()
-            return JsonResponse({'message': 'Profile created successfully!'}, status=201)
+            return Response({'message': 'Profile created successfully!'}, status=status.HTTP_201_CREATED)
         else:
-            return JsonResponse({'errors': form.errors}, status=400)
+            return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    return JsonResponse({'error': 'Invalid request method.'}, status=405)
+    return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@login_required
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def edit_candidate_profile_view(request):
     candidate = get_object_or_404(Candidate, user=request.user)
-    if request.method == 'POST':
-        form = CandidateForm(request.POST, instance=candidate)
-        if form.is_valid():
-            form.save()
-            return redirect('candidate_profile')  
-    else:
-        form = CandidateForm(instance=candidate)
 
-    return render(request, 'my_app/candidate/candidate_form.html', {'form': form})
+    if request.method == 'PUT':
+        # Get the data from the request
+        data = request.data
+
+        # Create a mapping of expected field names based on the incoming data
+        expected_fields = {
+            'name': data.get('name'),
+            'contact_info': data.get('contact_info'),
+            'linkedin_profile': data.get('linkedin_profile'),
+            'portfolio': data.get('portfolio'),
+            'job_title': data.get('job_title'),
+            'industry': data.get('industry'),
+            'years_of_experience': data.get('years_of_experience'),
+            'degree': data.get('degree'),
+            'certification': data.get('certification'),
+            'institution': data.get('institution'),
+            'graduation_year': data.get('graduation_year'),
+            'technical_skills': data.get('technical_skills'),
+            'soft_skills': data.get('soft_skills'),
+            'preferred_industry': data.get('preferred_industry'),
+            'preferred_role': data.get('preferred_role'),
+            'preferred_work_environment': data.get('preferred_work_environment'),
+            'career_goals': data.get('career_goals'),
+            'values': data.get('values'),
+            'team_preferences': data.get('team_preferences'),
+            'location_preference': data.get('location_preference'),
+            'relocation_open': data.get('relocation_open'),
+            'availability': data.get('availability'),
+            'endorsements': data.get('endorsements'),
+        }
+
+        # Create a CandidateForm instance with the mapped data
+        form = CandidateForm(expected_fields, instance=candidate)
+        print(data)
+        if form.is_valid():
+            candidate = form.save(commit=False)
+            candidate.user = request.user  # Set the user here
+            candidate.save()
+            return Response({'message': 'Profile updated successfully!'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 #employee list page (not sure what this does???)
@@ -175,6 +237,39 @@ def candidate_form_view(request):
     return render(request, 'my_app/candidate/candidate_form.html', {'form': form})
 
 
+@login_required
+def sponsor_profile(request):
+    try:
+        sponsor = Sponsor.objects.get(user=request.user)  
+        return render(request, 'my_app/sponsor/sponsor_profile.html', {'sponsor': sponsor})
+    except Sponsor.DoesNotExist:
+        # If no candidate profile exists, render the registration form
+        if request.method == 'POST':
+            form = SponsorForm(request.POST)
+            if form.is_valid():
+                sponsor = form.save(commit=False)
+                sponsor.user = request.user  
+                sponsor.save()
+                return redirect('sponsor_profile') 
+        else:
+            form = SponsorForm()
+
+        return render(request, 'my_app/sponsor/sponsor_form.html', {'form': form, 'is_edit_view': False})
+
+@login_required
+def edit_sponsor_profile_view(request):
+    sponsor = get_object_or_404(Sponsor, user=request.user)
+    if request.method == 'POST':
+        form = SponsorForm(request.POST, instance=sponsor)
+        if form.is_valid():
+            form.save()
+            return redirect('sponsor_profile')  
+    else:
+        form = SponsorForm(instance=sponsor)
+
+    return render(request, 'my_app/sponsor/sponsor_form.html', {'form': form, 'is_edit_view': True})
+
+
 def sponsor_form_view(request):
     if request.method == 'POST':
         form = SponsorForm(request.POST)
@@ -185,3 +280,50 @@ def sponsor_form_view(request):
         form = SponsorForm()
 
     return render(request, 'my_app/sponsor/sponsor_form.html', {'form': form})
+
+
+
+# def calculate_similarity(candidate, sponsor):
+#     candidate_profile = f"{candidate.technical_skills} {candidate.soft_skills} {candidate.preferred_role} {candidate.years_of_experience}"
+#     sponsor_requirements = f"{sponsor.required_skills} {sponsor.preferred_skills} {sponsor.roles_offered} {sponsor.experience_range}"
+
+#     candidate_doc = nlp(candidate_profile)
+#     sponsor_doc = nlp(sponsor_requirements)
+
+#     similarity_score = candidate_doc.similarity(sponsor_doc)
+
+#     return similarity_score
+
+# def match_candidates_to_sponsors(request):
+#     sponsors = Sponsor.objects.all()
+#     candidates = Candidate.objects.all()
+#     matches = []
+#     print("Candidates:", candidates)
+#     print("Matches:", matches)
+#     for sponsor in sponsors:
+#         for candidate in candidates:
+#             similarity = calculate_similarity(candidate, sponsor)
+#             print(f"Candidate: {candidate.name}, Sponsor: {sponsor.org_name}, Similarity: {similarity}")
+#             print(similarity)
+#             if similarity > 0.75:  # Threshold for inviting candidates
+#                 matches.append((candidate, sponsor, similarity))
+
+#     # Optionally send invites based on the matches found
+#     context = {'matches': matches}
+#     return render(request, 'my_app/sponsor/candidates_invited.html', context)
+
+def match_candidates_to_sponsors(sponsor):
+    candidates = Candidate.objects.all()  # Get all candidates
+    matches = []
+
+    # Loop through candidates and calculate similarity
+    for candidate in candidates:
+        candidate_vector = nlp(f"{candidate.job_title} {candidate.industry} {candidate.technical_skills}")
+        sponsor_vector = nlp(f"{sponsor.roles_offered} {sponsor.industry} {sponsor.required_skills}")
+        similarity = candidate_vector.similarity(sponsor_vector) * 100  # Convert to percentage
+        
+        # Set a threshold for matching, e.g., 75 for high similarity (now in percentage)
+        if similarity > 50:
+            matches.append({'candidate': candidate, 'similarity': similarity})
+
+    return matches  # Return list of matched candidates

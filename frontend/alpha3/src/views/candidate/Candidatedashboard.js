@@ -1,32 +1,47 @@
-import React, { useState } from 'react';
-import { Home, Inbox, CircleUserRoundIcon, Calendar, Building } from 'lucide-react';
-import alfalogo from '../../assets/alpfalogo.png'; // Import your logo here
-import Eventlist from './Eventlist'; // Ensure this is the correct path for Eventlist
+import React, { useState } from "react";
+import {
+  Home,
+  Inbox,
+  CircleUserRoundIcon,
+  Calendar,
+  Building,
+  View,
+} from "lucide-react";
+import alfalogo from "../../assets/alpfalogo.png"; // Import your logo here
+import Eventlist from "./Eventlist"; // Ensure this is the correct path for Eventlist
+import ViewProfile from "./profile/Viewprofile";
 
 const SidebarItem = ({ icon: Icon, label, isNew, isActive, onClick }) => (
-  <li 
-    className={`flex items-center px-4 py-2 cursor-pointer ${isActive ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+  <li
+    className={`flex items-center px-4 py-2 cursor-pointer ${
+      isActive ? "bg-gray-200" : "hover:bg-gray-100"
+    }`}
     onClick={onClick}
   >
     <Icon className="mr-2" size={20} />
     <span>{label}</span>
-    {isNew && <span className="ml-2 text-xs bg-green-500 text-white px-1 rounded">New</span>}
+    {isNew && (
+      <span className="ml-2 text-xs bg-green-500 text-white px-1 rounded">
+        New
+      </span>
+    )}
   </li>
 );
 
 const Sidebar = ({ activePage, setActivePage }) => {
   const menuItems = [
-    { icon: Home, label: 'Home', path: 'home' },
-    { icon: CircleUserRoundIcon, label: 'My Profile', path: 'viewmyprofile' },
-    { icon: Inbox, label: 'Inbox', path: 'inbox' },
-    { icon: Calendar, label: 'Events', path: 'events' }, // Update path to match the key in PageContent
-    { icon: Building, label: 'Sponsors', path: 'sponsors' },
+    { icon: Home, label: "Home", path: "home" },
+    { icon: CircleUserRoundIcon, label: "My Profile", path: "viewmyprofile" },
+    { icon: Inbox, label: "Inbox", path: "inbox" },
+    { icon: Calendar, label: "Events", path: "events" }, // Update path to match the key in PageContent
+    { icon: Building, label: "Sponsors", path: "sponsors" },
   ];
 
   return (
     <div className="w-64 bg-white shadow-md h-screen">
       <div className="p-4 flex items-center">
-        <img src={alfalogo} alt="Logo" className="w-32 h-auto" /> {/* Add your logo here */}
+        <img src={alfalogo} alt="Logo" className="w-32 h-auto" />{" "}
+        {/* Add your logo here */}
       </div>
       <nav className="mt-4">
         <ul>
@@ -49,24 +64,24 @@ const Sidebar = ({ activePage, setActivePage }) => {
 const PageContent = ({ page }) => {
   const pageComponents = {
     home: () => <div>Home Page Content</div>,
-    viewmyprofile: () => <div>Profile Page Content</div>,
+    viewmyprofile: ViewProfile,
     inbox: () => <div>Inbox Page Content</div>,
     events: Eventlist, // Directly reference the imported Eventlist component
     sponsors: () => <div>Employers Page Content</div>,
   };
 
-  const PageComponent = pageComponents[page] || (() => <div>Page not found</div>);
+  const PageComponent =
+    pageComponents[page] || (() => <div>Page not found</div>);
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">{page.charAt(0).toUpperCase() + page.slice(1)} Page</h2>
       <PageComponent />
     </div>
   );
 };
 
 const Candidatedashboard = () => {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setActivePage] = useState("home");
 
   return (
     <div className="flex h-screen bg-gray-100">
