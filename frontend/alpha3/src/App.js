@@ -2,7 +2,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import NavBar from "./components/navbar/NavBar";
-import LandingPage from "./views/landingpage/landingPage"; // Corrected casing in import path
+import Landingpage from "./views/landingpage/Landingpage"; // Corrected casing in import path
 import Login from "./views/login/Login";
 import Signup from "./views/signup/Signup";
 import Profile from "./views/candidate/profile/Profile";
@@ -19,7 +19,7 @@ function App() {
         <Route path="/Eventlist" element={<Eventlist/>} />
         <Route path="/Typeformembed" element={<Typeformembed/>} />
         <Route path="/Profile" element={<Profile/>} />
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Landingpage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
