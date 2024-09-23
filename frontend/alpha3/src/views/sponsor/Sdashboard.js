@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CircleUserRoundIcon, List, Calendar, Upload, File } from 'lucide-react';
 import alfalogo from '../../assets/alpfalogo.png';
 import Eventlist from '.././candidate/Eventlist';
+import CandidateList from './Candidatelist';
 
 const SidebarItem = ({ icon: Icon, label, isActive, onClick }) => (
   <li
@@ -84,7 +85,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
 const PageContent = ({ page }) => {
   const pageComponents = {
     viewmyprofile: () => <div>Profile Page Content</div>,
-    candidatelist: () => <div>Candidate List Page Content</div>,
+    candidatelist: CandidateList,
     careerfairevents: Eventlist, // Link to Eventlist
   };
 
