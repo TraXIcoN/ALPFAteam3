@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
-import { CircleUserRoundIcon, List, Calendar, Upload, File } from 'lucide-react';
-import alfalogo from '../../assets/alpfalogo.png';
-import Eventlist from '.././candidate/Eventlist';
+import React, { useState } from "react";
+import {
+  CircleUserRoundIcon,
+  List,
+  Calendar,
+  Upload,
+  File,
+  PenBox,
+  DoorOpen,
+} from "lucide-react";
+import alfalogo from "../../assets/alpfalogo.png";
+import Eventlist from ".././candidate/Eventlist";
+import ViewSponsorProfile from "./profile/ViewSponsorProfile";
+import { DoorBack } from "@mui/icons-material";
 
 const SidebarItem = ({ icon: Icon, label, isActive, onClick }) => (
   <li
-    className={`flex items-center px-4 py-2 cursor-pointer ${isActive ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+    className={`flex items-center px-4 py-2 cursor-pointer ${
+      isActive ? "bg-gray-200" : "hover:bg-gray-100"
+    }`}
     onClick={onClick}
   >
     <Icon className="mr-2" size={20} />
@@ -13,13 +25,56 @@ const SidebarItem = ({ icon: Icon, label, isActive, onClick }) => (
   </li>
 );
 
+const logout = () => {
+  // Clear the authentication token and user ID from local storage
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userId");
+
+  // Optionally, you can also clear any other user-related data
+  // localStorage.removeItem("otherUserData");
+
+  // Redirect to the login page or home page
+  window.location.href = "/login"; // Change this to your desired route
+};
+const AiReview = () => (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh", // Full viewport height
+      textAlign: "center",
+    }}
+  >
+    <div>
+      <h5 style={{ paddingBottom: 50 }}>Welcome to the AI Console</h5>
+      <a
+        href="http://localhost:8501"
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          color: "white",
+          backgroundColor: "#1976d2",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          textDecoration: "none",
+        }}
+      >
+        Click here to access the AI console
+      </a>
+    </div>
+  </div>
+);
 const Sidebar = ({ activePage, setActivePage }) => {
   const [file, setFile] = useState(null);
 
   const menuItems = [
-    { icon: CircleUserRoundIcon, label: 'My Profile', path: 'viewmyprofile' },
-    { icon: List, label: 'Candidate List', path: 'candidatelist' },
-    { icon: Calendar, label: 'Career Fair Events', path: 'careerfairevents' },
+    { icon: CircleUserRoundIcon, label: "My Profile", path: "viewmyprofile" },
+    { icon: List, label: "Candidate List", path: "candidatelist" },
+    { icon: Calendar, label: "Career Fair Events", path: "careerfairevents" },
+    { icon: PenBox, label: "Career Fair Events", path: "AiReviewer" },
+    { icon: DoorOpen, label: "Logout", path: "logout" },
   ];
 
   const handleFileChange = (e) => {
@@ -28,7 +83,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
 
   const handleSubmit = () => {
     if (file) {
-      console.log('Uploading file:', file.name);
+      console.log("Uploading file:", file.name);
       setFile(null);
     }
   };
@@ -83,12 +138,15 @@ const Sidebar = ({ activePage, setActivePage }) => {
 
 const PageContent = ({ page }) => {
   const pageComponents = {
-    viewmyprofile: () => <div>Profile Page Content</div>,
+    viewmyprofile: ViewSponsorProfile,
     candidatelist: () => <div>Candidate List Page Content</div>,
     careerfairevents: Eventlist, // Link to Eventlist
+    AiReviewer: AiReview,
+    logout: logout,
   };
 
-  const PageComponent = pageComponents[page] || (() => <div>Page not found</div>);
+  const PageComponent =
+    pageComponents[page] || (() => <div>Page not found</div>);
 
   return (
     <div className="p-6">
@@ -98,7 +156,7 @@ const PageContent = ({ page }) => {
 };
 
 const Sdashboard = () => {
-  const [activePage, setActivePage] = useState('viewmyprofile');
+  const [activePage, setActivePage] = useState("viewmyprofile");
 
   return (
     <div className="flex h-screen bg-gray-100">

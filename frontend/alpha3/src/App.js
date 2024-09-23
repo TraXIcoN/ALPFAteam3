@@ -14,6 +14,7 @@ import Candidatedashboard from "./views/candidate/Candidatedashboard";
 import Sdashboard from "./views/sponsor/Sdashboard";
 import Corspage from "./views/signup/Corspage";
 import ViewProfile from "./views/candidate/profile/Viewprofile";
+import ViewSponsorProfile from "./views/sponsor/profile/ViewSponsorProfile";
 import SponsorProfile from "./views/sponsor/profile/SponsorProfile";
 import { View } from "lucide-react";
 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/candidate-signup" element={<CanSignup />} />
         <Route path="/sponsor-signup" element={<SpoSignup />} />
         <Route path="/ViewProfile" element={<ViewProfile />} />
+        <Route path="/ViewSponsorProfile" element={<ViewSponsorProfile />} />
         <Route path="/sponsor-profile" element={<SponsorProfile />} />
       </Routes>
     </Router>

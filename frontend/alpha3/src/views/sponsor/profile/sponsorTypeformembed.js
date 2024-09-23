@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -13,7 +14,9 @@ import {
   FormLabel,
   Typography,
   LinearProgress,
-} from '@mui/material';
+} from "@mui/material";
+import axios from "axios"; // Import axios for API calls
+import Cookies from "js-cookie"; // Import Cookies for CSRF token
 
 const steps = [
   {
@@ -22,7 +25,7 @@ const steps = [
       <TextField
         label="Company Website"
         variant="outlined"
-        value={value || ''}
+        value={value || ""}
         onChange={onChange}
         fullWidth
       />
@@ -34,24 +37,27 @@ const steps = [
       <TextField
         label="Job Title"
         variant="outlined"
-        value={value || ''}
+        value={value || ""}
         onChange={onChange}
         fullWidth
       />
     ),
   },
   {
-    question: "What is your work environment like (e.g., in-office, remote, hybrid)?",
+    question:
+      "What is your work environment like (e.g., in-office, remote, hybrid)?",
     input: (value, onChange) => (
       <TextField
         select
         label="Work Environment"
-        value={value || ''}
+        value={value || ""}
         onChange={onChange}
         fullWidth
       >
-        {["In-office", "Remote", "Hybrid"].map((environment) => (
-          <MenuItem key={environment} value={environment}>{environment}</MenuItem>
+        {["In_office", "Remote", "Hybrid"].map((environment) => (
+          <MenuItem key={environment} value={environment}>
+            {environment}
+          </MenuItem>
         ))}
       </TextField>
     ),
@@ -62,7 +68,7 @@ const steps = [
       <TextField
         label="Salary Range"
         variant="outlined"
-        value={value || ''}
+        value={value || ""}
         onChange={onChange}
         fullWidth
       />
@@ -73,7 +79,14 @@ const steps = [
     input: (value, onChange) => (
       <FormControl component="fieldset">
         <FormLabel component="legend">Open Roles</FormLabel>
-        {["Finance", "Technology", "Healthcare", "Consulting", "Marketing & Advertising", "Other"].map((role) => (
+        {[
+          "Finance",
+          "Technology",
+          "Healthcare",
+          "Consulting",
+          "Marketing & Advertising",
+          "Other",
+        ].map((role) => (
           <FormControlLabel
             key={role}
             control={
@@ -95,19 +108,33 @@ const steps = [
     ),
   },
   {
-    question: "What technical skills are required for the roles you're offering?",
+    question:
+      "What technical skills are required for the roles you're offering?",
     input: (value, onChange) => (
       <FormControl component="fieldset">
         <FormLabel component="legend">Required Technical Skills</FormLabel>
-        {["Communication", "Problem-solving", "Leadership", "Teamwork", "Creativity", "Adaptability"].map((skill) => (
+        {[
+          "Communication",
+          "Problem-solving",
+          "Leadership",
+          "Teamwork",
+          "Creativity",
+          "Adaptability",
+        ].map((skill) => (
           <FormControlLabel
             key={skill}
-            control={<Checkbox checked={Array.isArray(value) && value.includes(skill)} onChange={(event) => {
-              const newValue = event.target.checked
-                ? [...(value || []), skill]
-                : value.filter(item => item !== skill);
-              onChange(newValue);
-            }} name={skill} />}
+            control={
+              <Checkbox
+                checked={Array.isArray(value) && value.includes(skill)}
+                onChange={(event) => {
+                  const newValue = event.target.checked
+                    ? [...(value || []), skill]
+                    : value.filter((item) => item !== skill);
+                  onChange(newValue);
+                }}
+                name={skill}
+              />
+            }
             label={skill}
           />
         ))}
@@ -117,27 +144,46 @@ const steps = [
   {
     question: "What is your preferred range of experience for candidates?",
     input: (value, onChange) => (
-      <RadioGroup value={value || ''} onChange={onChange}>
-        {["Entry-level", "Mid-level", "Senior-level", "Executive-level"].map((level) => (
-          <FormControlLabel key={level} value={level} control={<Radio />} label={level} />
-        ))}
+      <RadioGroup value={value || ""} onChange={onChange}>
+        {["Entry_level", "Mid_level", "Senior_level", "Executive_level"].map(
+          (level) => (
+            <FormControlLabel
+              key={level}
+              value={level}
+              control={<Radio />}
+              label={level}
+            />
+          )
+        )}
       </RadioGroup>
     ),
   },
   {
-    question: "Are there any specific company benefits you'd like to highlight?",
+    question:
+      "Are there any specific company benefits you'd like to highlight?",
     input: (value, onChange) => (
       <FormControl component="fieldset">
         <FormLabel component="legend">Company Benefits</FormLabel>
-        {["Health Insurance", "401(k) Matching", "Flexible Work Hours", "Other"].map((benefit) => (
+        {[
+          "Health Insurance",
+          "401(k) Matching",
+          "Flexible Work Hours",
+          "Other",
+        ].map((benefit) => (
           <FormControlLabel
             key={benefit}
-            control={<Checkbox checked={Array.isArray(value) && value.includes(benefit)} onChange={(event) => {
-              const newValue = event.target.checked
-                ? [...(value || []), benefit]
-                : value.filter(item => item !== benefit);
-              onChange(newValue);
-            }} name={benefit} />}
+            control={
+              <Checkbox
+                checked={Array.isArray(value) && value.includes(benefit)}
+                onChange={(event) => {
+                  const newValue = event.target.checked
+                    ? [...(value || []), benefit]
+                    : value.filter((item) => item !== benefit);
+                  onChange(newValue);
+                }}
+                name={benefit}
+              />
+            }
             label={benefit}
           />
         ))}
@@ -145,12 +191,13 @@ const steps = [
     ),
   },
   {
-    question: "Does your company offer any growth opportunities for employees? If yes, please describe.",
+    question:
+      "Does your company offer any growth opportunities for employees? If yes, please describe.",
     input: (value, onChange) => (
       <TextField
         label="Growth Opportunities"
         variant="outlined"
-        value={value || ''}
+        value={value || ""}
         onChange={onChange}
         fullWidth
         multiline
@@ -168,14 +215,16 @@ const SponsorTypeformembed = () => {
     const newFormData = [...formData];
     const value = newFormData[index];
 
-    if (event.target.type === 'checkbox') {
+    if (event.target.type === "checkbox") {
       const checkboxValue = event.target.name;
       newFormData[index] = Array.isArray(value) ? value : [];
 
       if (event.target.checked) {
         newFormData[index].push(checkboxValue);
       } else {
-        newFormData[index] = newFormData[index].filter(item => item !== checkboxValue);
+        newFormData[index] = newFormData[index].filter(
+          (item) => item !== checkboxValue
+        );
       }
     } else {
       newFormData[index] = event.target.value;
@@ -184,17 +233,48 @@ const SponsorTypeformembed = () => {
     setFormData(newFormData);
   };
 
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, steps.length - 1));
+  const nextStep = () =>
+    setStep((prev) => Math.min(prev + 1, steps.length - 1));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    try {
+      const csrfToken = Cookies.get("csrftoken"); // Get CSRF token
+      const token = localStorage.getItem("authToken"); // Get auth token from local storage
+      const response = await axios.post(
+        "http://localhost:8000/sponsor/profile/", // Update with your API endpoint
+        formData,
+        {
+          headers: {
+            Authorization: `Token ${token}`, // Include the token in the headers
+            "X-CSRFToken": csrfToken, // Include the CSRF token in the headers
+            "Content-Type": "application/json", // Set content type if needed
+          },
+        }
+      );
+
+      console.log("Sponsor data submitted:", response.data);
+      console.log(response);
+      alert("Profile created successfully!"); // Notify user of success
+      navigate("/Sdashboard"); // Navigate to Sdashboard
+    } catch (error) {
+      console.error("Error submitting sponsor data:", error);
+      alert(
+        "Error submitting data: " +
+          (error.response?.data?.error || "An error occurred")
+      );
+    }
+  };
 
   return (
     <Container
       maxWidth="sm"
       sx={{
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
         borderRadius: 4,
         padding: 4,
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
         mt: 6,
       }}
     >
@@ -205,10 +285,10 @@ const SponsorTypeformembed = () => {
           mb: 3,
           height: 10,
           borderRadius: 5,
-          backgroundColor: '#e0e0e0',
-          '& .MuiLinearProgress-bar': {
+          backgroundColor: "#e0e0e0",
+          "& .MuiLinearProgress-bar": {
             borderRadius: 5,
-            backgroundColor: '#1976d2',
+            backgroundColor: "#1976d2",
           },
         }}
       />
@@ -219,14 +299,14 @@ const SponsorTypeformembed = () => {
           gutterBottom
           sx={{
             fontWeight: 600,
-            color: '#333333',
-            letterSpacing: '0.5px',
+            color: "#333333",
+            letterSpacing: "0.5px",
           }}
         >
           {steps[step].question}
         </Typography>
         {steps[step].input(formData[step], handleChange(step))}
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ mt: 4, display: "flex", justifyContent: "space-between" }}>
           {step > 0 && (
             <Button
               variant="outlined"
@@ -235,12 +315,12 @@ const SponsorTypeformembed = () => {
                 px: 3,
                 py: 1,
                 borderRadius: 50,
-                textTransform: 'none',
-                borderColor: '#1976d2',
-                color: '#1976d2',
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                  borderColor: '#1565c0',
+                textTransform: "none",
+                borderColor: "#1976d2",
+                color: "#1976d2",
+                "&:hover": {
+                  backgroundColor: "#f0f0f0",
+                  borderColor: "#1565c0",
                 },
               }}
             >
@@ -255,11 +335,11 @@ const SponsorTypeformembed = () => {
                 px: 3,
                 py: 1,
                 borderRadius: 50,
-                backgroundColor: '#1976d2',
-                color: '#fff',
-                textTransform: 'none',
-                '&:hover': {
-                  backgroundColor: '#1565c0',
+                backgroundColor: "#1976d2",
+                color: "#fff",
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#1565c0",
                 },
               }}
             >
@@ -273,8 +353,9 @@ const SponsorTypeformembed = () => {
                 px: 3,
                 py: 1,
                 borderRadius: 50,
-                textTransform: 'none',
+                textTransform: "none",
               }}
+              onClick={handleSubmit} // Call handleSubmit on final submission
             >
               Submit
             </Button>

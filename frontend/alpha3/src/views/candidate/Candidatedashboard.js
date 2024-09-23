@@ -8,6 +8,7 @@ import {
   View,
   PenBox,
   Upload,
+  DoorOpen,
 } from "lucide-react";
 import alfalogo from "../../assets/alpfalogo.png"; // Import your logo here
 import Eventlist from "./Eventlist"; // Ensure this is the correct path for Eventlist
@@ -29,6 +30,17 @@ const SidebarItem = ({ icon: Icon, label, isNew, isActive, onClick }) => (
     )}
   </li>
 );
+const logout = () => {
+  // Clear the authentication token and user ID from local storage
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userId");
+
+  // Optionally, you can also clear any other user-related data
+  // localStorage.removeItem("otherUserData");
+
+  // Redirect to the login page or home page
+  window.location.href = "/login"; // Change this to your desired route
+};
 
 const Sidebar = ({ activePage, setActivePage }) => {
   const [file, setFile] = useState(null);
@@ -39,16 +51,16 @@ const Sidebar = ({ activePage, setActivePage }) => {
     { icon: Calendar, label: "Events", path: "events" }, // Update path to match the key in PageContent
     { icon: Building, label: "Sponsors", path: "sponsors" },
     { icon: PenBox, label: "AiReview", path: "AiReview" },
+    { icon: DoorOpen, label: "Logout", path: "logout" },
   ];
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
-
   const handleSubmit = () => {
     if (file) {
       // Here you would typically handle the file upload
-      console.log('Uploading file:', file.name);
+      console.log("Uploading file:", file.name);
       // Reset the file state after upload
       setFile(null);
     }
@@ -77,7 +89,7 @@ const Sidebar = ({ activePage, setActivePage }) => {
       <div className="p-4 border-t">
         <h3 className="font-semibold mb-2 flex items-center">
           <Upload className="mr-2" size={20} />
-          Upload Resume 
+          Upload Resume
         </h3>
         <input
           type="file"
@@ -139,6 +151,7 @@ const PageContent = ({ page }) => {
     events: Eventlist,
     sponsors: () => <div>Employers Page Content</div>,
     AiReview: AiReview,
+    logout: logout,
   };
 
   const PageComponent =
