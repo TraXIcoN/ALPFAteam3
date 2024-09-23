@@ -59,7 +59,7 @@ const PageContent = ({ page }) => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">{page.charAt(0).toUpperCase() + page.slice(1)} Page</h2>
+      
       <PageComponent />
     </div>
   );

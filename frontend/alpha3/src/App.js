@@ -9,14 +9,16 @@ import Profile from "./views/candidate/profile/Profile";
 import Typeformembed from "./views/candidate/profile/Typeformembed";
 import Eventlist from "./views/candidate/Eventlist";
 import Candidatedashboard from "./views/candidate/Candidatedashboard";
+import Corspage from './views/signup/Corspage'; 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/Candidatedashboard" element={<Candidatedashboard />} />
-        <Route path="/Eventlist" element={<Eventlist />} />
-        <Route path="/Typeformembed" element={<Typeformembed />} />
-        <Route path="/Profile" element={<Profile />} />
+        <Route path="/Corspage" element={<Corspage/>} />
+        <Route path="/Candidatedashboard" element={<Candidatedashboard/>} />
+        <Route path="/Eventlist" element={<Eventlist/>} />
+        <Route path="/Typeformembed" element={<Typeformembed/>} />
+        <Route path="/Profile" element={<Profile/>} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

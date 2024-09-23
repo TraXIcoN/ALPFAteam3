@@ -51,8 +51,8 @@ const Signup = () => {
       );
 
       console.log("User created:", response.data);
-      // Redirect to profile page after successful signup
-      navigate("/Profile");
+      // Redirect to Corspage after successful signup
+      navigate("/Corspage");
     } catch (error) {
       console.error("Error creating user:", error);
       alert(

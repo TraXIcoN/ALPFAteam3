@@ -161,7 +161,7 @@ const Login = () => {
             align="center"
             style={{ marginTop: "1rem" }}
           >
-            Don't have an account? <Link href="/signup">Register</Link>
+            Don't have an account? <Link href="/Corspage">Register</Link>
           </Typography>
         </Box>
       </Paper>
