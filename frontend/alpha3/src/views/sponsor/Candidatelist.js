@@ -30,12 +30,12 @@ const CandidateList = () => {
   const candidates = [
     {
       id: 1,
-      name: "John Doe",
-      jobTitle: "Frontend Developer",
-      location: "New York, USA",
+      name: "Aditya Mohan",
+      jobTitle: "Full stack Developer",
+      location: "Atlanta, USA",
       experience: "3 years",
-      skills: ["React", "JavaScript", "Tailwind CSS"],
-      education: "B.Sc. Computer Science",
+      skills: ["Django", "Python", "Azure"],
+      education: "M.Sc. Computer Science",
       matchScore: 87,
       major: "Computer Science",
       icon: <FaUserTie />,
