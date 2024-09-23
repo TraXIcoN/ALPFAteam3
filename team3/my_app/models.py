@@ -50,40 +50,25 @@ class Candidate(models.Model):
 #need to add candidates preferred org size
 
 class Sponsor(models.Model):
-    # Basic company info
-    company_name = models.CharField(max_length=255)
-    industry = models.CharField(max_length=255)
-    website = models.URLField()
-    size = models.IntegerField()  
-    headquarters = models.CharField(max_length=255)
-    office_locations = models.TextField(blank=True, null=True)
-
-    #listings
-    roles_offered = models.TextField()
-    required_skills = models.TextField()
-    preferred_skills = models.TextField(blank=True, null=True)
-
-    #organization culture
-    culture_fit = models.TextField(blank=True, null=True)
-    diversity_initiatives = models.TextField(blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    company_website = models.URLField(max_length=255, blank=True, null=True)
+    job_title = models.CharField(max_length=255, blank=True, null=True)
     work_environment = models.CharField(max_length=50, choices=[
-        ('remote', 'Remote'), ('hybrid', 'Hybrid'), ('in_office', 'In-office')])
-
-    #Skills
-    technical_skills_needed = models.TextField() 
-    soft_skills_needed = models.TextField(blank=True, null=True)
-
-    #preferences
-    candidate_education_preference = models.CharField(max_length=255, blank=True, null=True)
-    experience_range = models.CharField(max_length=50, choices=[
-        ('junior', 'Junior'), ('mid_level', 'Mid-Level'), ('senior', 'Senior')])
-
-    #Company Growth
+        ('in_office', 'In-office'),
+        ('remote', 'Remote'),
+        ('hybrid', 'Hybrid'),
+    ], blank=True, null=True)
+    salary_range = models.CharField(max_length=100, blank=True, null=True)
+    open_roles = models.JSONField(blank=True, null=True)  # Store as a list of roles
+    required_skills = models.JSONField(blank=True, null=True)  # Store as a list of skills
+    experience_level = models.CharField(max_length=50, choices=[
+        ('entry_level', 'Entry-level'),
+        ('mid_level', 'Mid-level'),
+        ('senior_level', 'Senior-level'),
+        ('executive_level', 'Executive-level'),
+    ], blank=True, null=True)
+    company_benefits = models.JSONField(blank=True, null=True)  # Store as a list of benefits
     growth_opportunities = models.TextField(blank=True, null=True)
-    mentorship_opportunities = models.TextField(blank=True, null=True)
-
-    # Event-Specific Preferences (Sponsor-Specific Events)
-    flexibility_in_matching = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.company_name
+        return f"{self.user.username}'s Sponsor Profile"

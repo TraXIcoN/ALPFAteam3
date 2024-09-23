@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CandidateForm, SponsorForm
 from django.contrib.auth.decorators import login_required
-from .models import Candidate
+from .models import Candidate, Sponsor
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
@@ -236,49 +236,111 @@ def candidate_form_view(request):
 
     return render(request, 'my_app/candidate/candidate_form.html', {'form': form})
 
-
-@login_required
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def sponsor_profile(request):
-    try:
-        sponsor = Sponsor.objects.get(user=request.user)  
-        return render(request, 'my_app/sponsor/sponsor_profile.html', {'sponsor': sponsor})
-    except Sponsor.DoesNotExist:
-        # If no candidate profile exists, render the registration form
-        if request.method == 'POST':
-            form = SponsorForm(request.POST)
-            if form.is_valid():
-                sponsor = form.save(commit=False)
-                sponsor.user = request.user  
-                sponsor.save()
-                return redirect('sponsor_profile') 
+    if request.method == 'GET':
+        print("fetching details")
+        try:
+            sponsor = Sponsor.objects.get(user=request.user)
+            # Prepare the response data
+            response_data = {
+            'company_website': sponsor.company_website,
+            'job_title': sponsor.job_title,
+            'work_environment': sponsor.work_environment,
+            'salary_range': sponsor.salary_range,
+            'open_roles': sponsor.open_roles,
+            'required_skills': sponsor.required_skills,
+            'experience_level': sponsor.experience_level,
+            'company_benefits': sponsor.company_benefits,
+            'growth_opportunities': sponsor.growth_opportunities,
+        }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Sponsor.DoesNotExist:
+            return Response({'error': 'Spnosor profile does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+    elif request.method == 'POST':
+        # Convert incoming data to a dictionary
+        data = request.data  # This should be a dictionary
+        print(request.user)
+        # If the data is in a list format, convert it to a dictionary
+        if isinstance(data, list):
+            data_dict = {str(i): value for i, value in enumerate(data)}
         else:
-            form = SponsorForm()
+            data_dict = data  # If it's already a dictionary, use it directly
 
-        return render(request, 'my_app/sponsor/sponsor_form.html', {'form': form, 'is_edit_view': False})
+        # Create a mapping of expected field names based on the specified order
+        expected_fields = {
+                    'user': request.user,  # Automatically set the user
+                    'company_website': data_dict.get('0'),  # Company Website
+                    'job_title': data_dict.get('1'),  # Job Title
+                    'work_environment': data_dict.get('2').lower(),  # Work Environment
+                    'salary_range': data_dict.get('3'),  # Salary Range
+                    'open_roles': data_dict.get('4'),  # Open Roles
+                    'required_skills': data_dict.get('5'),  # Required Skills
+                    'experience_level': data_dict.get('6').lower(),  # Experience Level
+                    'company_benefits': data_dict.get('7'),  # Company Benefits
+                    'growth_opportunities': data_dict.get('8'),  # Growth Opportunities
+                }
 
-@login_required
-def edit_sponsor_profile_view(request):
-    sponsor = get_object_or_404(Sponsor, user=request.user)
-    if request.method == 'POST':
-        form = SponsorForm(request.POST, instance=sponsor)
+        # Create a CandidateForm instance with the mapped data
+        form = SponsorForm(expected_fields)
+
         if form.is_valid():
-            form.save()
-            return redirect('sponsor_profile')  
-    else:
-        form = SponsorForm(instance=sponsor)
+            sponsor = form.save(commit=False)
+            sponsor.user = request.user  # Link the user to the sponsor
+            sponsor.save()  # Save the updated sponsor profile
+            return Response({'message': 'Profile updated successfully!', 'redirect': 'Sdashboard'}, status=status.HTTP_200_OK)
+        return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    return render(request, 'my_app/sponsor/sponsor_form.html', {'form': form, 'is_edit_view': True})
+    return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_sponsor_profile(request):
+    sponsor = get_object_or_404(Sponsor, user=request.user)
 
+    if request.method == 'PUT':
+        # Get the data from the request
+        data = request.data
+
+        # Create a mapping of expected field names based on the incoming data
+        expected_fields = {
+                    'user': request.user,  # Automatically set the user
+                    'company_website': data.get('0'),  # Company Website
+                    'job_title': data.get('1'),  # Job Title
+                    'work_environment': data.get('2').lower(),  # Work Environment
+                    'salary_range': data.get('3'),  # Salary Range
+                    'open_roles': data.get('4'),  # Open Roles
+                    'required_skills': data.get('5'),  # Required Skills
+                    'experience_level': data.get('6').lower(),  # Experience Level
+                    'company_benefits': data.get('7'),  # Company Benefits
+                    'growth_opportunities': data.get('8'),  # Growth Opportunities
+                }
+
+        # Create a CandidateForm instance with the mapped data
+        form = CandidateForm(expected_fields, instance=candidate)
+        print(data)
+        if form.is_valid():
+            candidate = form.save(commit=False)
+            candidate.user = request.user  # Set the user here
+            candidate.save()
+            return Response({'message': 'Profile updated successfully!'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def sponsor_form_view(request):
     if request.method == 'POST':
-        form = SponsorForm(request.POST)
+        form = SponsorForm(request.data)
         if form.is_valid():
-            form.save()  
-            return redirect('sponsor_options')  
-    else:
-        form = SponsorForm()
+            form.save()
+            return redirect('sponsor_options')
 
+    form = SponsorForm()
     return render(request, 'my_app/sponsor/sponsor_form.html', {'form': form})
 
 

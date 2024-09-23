@@ -22,6 +22,6 @@ urlpatterns = [
     path('sponsor/event/', views.event_description, name='event_description'),
     path('sponsor/invites/', views.candidates_invited, name='candidates_invited'),
     path('sponsor/profile/', views.sponsor_profile, name='sponsor_profile'),
-    path('sponsor/profile/edit', views.edit_sponsor_profile_view, name='edit_sponsor_profile'),
+    path('sponsor/profile/edit/', views.edit_sponsor_profile, name='edit_sponsor_profile'),
     path('sponsor/matches/', views.match_candidates_to_sponsors, name='match_candidates_to_sponsors'),
 ]
