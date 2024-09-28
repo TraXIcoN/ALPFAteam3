@@ -1,19 +1,16 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from .forms import CandidateForm, SponsorForm
-from django.contrib.auth.decorators import login_required
-from .models import Candidate, Sponsor
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib import messages
-from rest_framework import status
+from .models import Candidate, Sponsor, Event
+from django.contrib.auth import authenticate
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import CandidateSerializer, UserSerializer
+from .serializers import UserSerializer, EventSerializer
 from rest_framework.authtoken.models import Token
-from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated, AllowAny
 import spacy
 nlp = spacy.load("en_core_web_lg")
+
 #Landing page
 def home(request):
     return render(request, 'my_app/home.html')
@@ -46,13 +43,17 @@ def login(request):
     else:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-#candidate options
-def candidate_options(request):
-    return render(request, 'my_app/candidate/candidate_options.html')
-
-#explore companies page
-def view_orgs(request):
-    return render(request, 'my_app/candidate/view_organizations.html')
+#candidate id
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def candidate_profile_id(request):
+    if request.method == 'GET':
+        try:
+            candidate = Candidate.objects.get(user=request.user)
+            print(candidate.id)
+            return Response({'id':candidate.id,}, status=status.HTTP_200_OK)
+        except Candidate.DoesNotExist:
+            return Response({'error': 'Candidate profile does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
 #candidate profile page
 @api_view(['GET', 'POST'])
@@ -61,6 +62,7 @@ def candidate_profile(request):
     if request.method == 'GET':
         try:
             candidate = Candidate.objects.get(user=request.user)
+            print(candidate.id)
             # Prepare the response data
             response_data = {
                 'name': candidate.name,
@@ -193,10 +195,6 @@ def edit_candidate_profile_view(request):
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-#employee list page (not sure what this does???)
-def employee_list(request):
-    return render(request, 'my_app/candidate/employee_list.html')
-
 #sponsor options
 def sponsor_options(request):
     return render(request, 'my_app/sponsor/sponsor_options.html')
@@ -208,22 +206,6 @@ def event_description(request):
 #candidates invited page (sponsors can view invited candidates)
 def candidates_invited(request):
     return render(request, 'my_app/sponsor/candidates_invited.html')
-
-#company profile
-def sponsor_profile(request):
-    return render(request, 'my_app/sponsor/sponsor_profile.html')
-
-#candidate form
-def candidate_form_view(request):
-    if request.method == 'POST':
-        form = CandidateForm(request.POST)
-        if form.is_valid():
-            form.save()  
-            return redirect('candidate_options')  
-    else:
-        form = CandidateForm()
-
-    return render(request, 'my_app/candidate/candidate_form.html', {'form': form})
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
@@ -320,20 +302,45 @@ def edit_sponsor_profile(request):
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def sponsor_form_view(request):
-    if request.method == 'POST':
-        form = SponsorForm(request.data)
-        if form.is_valid():
-            form.save()
-            return redirect('sponsor_options')
+class EventListView(generics.ListCreateAPIView):  # Use ListCreateAPIView for both GET and POST
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
 
-    form = SponsorForm()
-    return render(request, 'my_app/sponsor/sponsor_form.html', {'form': form})
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests to retrieve all events."""
+        events = self.get_queryset()
+        serializer = self.get_serializer(events, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def post(self, request, *args, **kwargs):
+        """Handle POST requests to create a new event."""
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class EventDetailView(generics.RetrieveUpdateDestroyAPIView):  # Use RetrieveUpdateDestroyAPIView for GET, PUT, DELETE
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
 
+    def put(self, request, *args, **kwargs):
+        """Handle PUT requests to update an existing event."""
+        event = self.get_object()  # Get the event instance
+        print(f"Updating event: {event.id}")  # Log the event ID being updated
+
+        # Log the incoming request data
+        print(f"Incoming request data: {request.data}")
+
+        serializer = self.get_serializer(event, data=request.data, partial=True)  # Allow partial updates
+        if serializer.is_valid():
+            print("Serializer is valid. Saving the updated event.")  # Log when the serializer is valid
+            serializer.save()  # Save the updated event
+            print(f"Event updated successfully: {serializer.data}")  # Log the updated event data
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        print("Serializer errors:", serializer.errors)  # Log any serializer errors
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # def calculate_similarity(candidate, sponsor):
 #     candidate_profile = f"{candidate.technical_skills} {candidate.soft_skills} {candidate.preferred_role} {candidate.years_of_experience}"
 #     sponsor_requirements = f"{sponsor.required_skills} {sponsor.preferred_skills} {sponsor.roles_offered} {sponsor.experience_range}"

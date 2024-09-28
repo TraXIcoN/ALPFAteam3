@@ -21,7 +21,7 @@ class Candidate(models.Model):
     graduation_year = models.IntegerField(blank=True, null=True)
 
     #skills
-    technical_skills = models.TextField() 
+    technical_skills = models.TextField()
     soft_skills = models.TextField(blank=True, null=True)
 
     #goals
@@ -72,3 +72,14 @@ class Sponsor(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Sponsor Profile"
+
+class Event(models.Model):
+    title = models.CharField(max_length=255)
+    date = models.DateTimeField()
+    time = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
+    description = models.TextField()
+    candidates_rsvped = models.ManyToManyField('Candidate', related_name='events_rsvped')
+
+    def __str__(self):
+        return self.title
