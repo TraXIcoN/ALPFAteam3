@@ -14,6 +14,9 @@ urlpatterns = [
     path('candidate/profile/edit/', views.edit_candidate_profile_view, name='edit_candidate_profile'),
     path('candidate/profile/id/', views.candidate_profile_id, name='candidate_profile_id'),
 
+    #Resume upload
+    path('upload/', views.upload_resume, name='upload_resume'),
+
     #for sponsors
     path('sponsor/', views.sponsor_options, name='sponsor_options'),
     path('sponsor/event/', views.event_description, name='event_description'),

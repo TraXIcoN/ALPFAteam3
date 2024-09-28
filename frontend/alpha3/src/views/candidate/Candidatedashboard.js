@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Home,
   Inbox,
@@ -15,6 +15,8 @@ import Eventlist from "./Eventlist"; // Ensure this is the correct path for Even
 import ViewProfile from "./profile/Viewprofile";
 import Sponsorlist from "./Sponsorlist";
 import InboxComponent from "./inbox";
+import Cookies from "js-cookie";
+import axios from "axios"; // Import axios for making API calls
 
 const SolutionCard = ({ icon: Icon, title, description }) => (
   <div className="bg-white p-6 rounded-lg shadow-md">
@@ -55,6 +57,15 @@ const logout = () => {
 
 const Sidebar = ({ activePage, setActivePage }) => {
   const [file, setFile] = useState(null);
+  const [uploadedFileName, setUploadedFileName] = useState(null); // State to store the uploaded file name
+
+  useEffect(() => {
+    // Check local storage for uploaded file name
+    const storedFileName = localStorage.getItem("uploadedFileName");
+    if (storedFileName) {
+      setUploadedFileName(storedFileName);
+    }
+  }, []);
 
   const menuItems = [
     { icon: CircleUserRoundIcon, label: "My Profile", path: "viewmyprofile" },
@@ -68,10 +79,42 @@ const Sidebar = ({ activePage, setActivePage }) => {
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
+    const token = localStorage.getItem("authToken");
+    const csrfToken = Cookies.get("csrftoken");
+    if (!token) {
+      console.error("User is not authenticated");
+      return; // Prevent the upload if the user is not authenticated
+    }
     if (file) {
-      console.log("Uploading file:", file.name);
-      setFile(null);
+      const formData = new FormData();
+      formData.append("resume", file); // Append the file to the form data
+      try {
+        const response = await axios.post(
+          `http://localhost:8000/upload/`, // Update with your Django upload URL
+          formData, // Use formData instead of updatedEvent
+          {
+            headers: {
+              Authorization: `Token ${token}`, // Include the token in the headers
+              "X-CSRFToken": csrfToken,
+              "Content-Type": "multipart/form-data", // Set content type to multipart/form-data
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          // Check for successful response
+          console.log("File uploaded successfully");
+          localStorage.setItem("uploadedFileName", file.name); // Store the uploaded file name in local storage
+          setUploadedFileName(file.name); // Update state
+          setFile(null);
+        } else {
+          console.error("Upload failed");
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error); // Handle any errors
+      }
     }
   };
 
@@ -94,6 +137,16 @@ const Sidebar = ({ activePage, setActivePage }) => {
         </ul>
       </nav>
       <div className="p-4 border-t">
+        {uploadedFileName && ( // Conditionally render the button if a file is uploaded
+          <a
+            href={`http://localhost:8000/media/resumes/${uploadedFileName}`} // Update with your Django media URL
+            className="block w-full bg-green-500 text-white py-2 px-4 rounded text-center mb-2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Uploaded Resume
+          </a>
+        )}
         <h3 className="font-semibold mb-2 flex items-center">
           <Upload className="mr-2" size={20} />
           Upload Resume

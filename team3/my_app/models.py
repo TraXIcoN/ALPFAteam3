@@ -83,3 +83,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+class UserResume(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    resume = models.FileField(upload_to='resumes/')

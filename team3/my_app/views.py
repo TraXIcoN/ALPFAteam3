@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .forms import CandidateForm, SponsorForm
-from .models import Candidate, Sponsor, Event
+from .models import Candidate, Sponsor, Event, UserResume
 from django.contrib.auth import authenticate
 from rest_framework import status, generics
 from rest_framework.response import Response
@@ -8,6 +8,10 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer, EventSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 import spacy
 nlp = spacy.load("en_core_web_lg")
 
@@ -194,6 +198,15 @@ def edit_candidate_profile_view(request):
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_resume(request):
+    if request.method == 'POST' and request.FILES['resume']:
+        resume = request.FILES['resume']
+        user_resume, created = UserResume.objects.get_or_create(user=request.user)
+        user_resume.resume.save(resume.name, resume)  # Save the new resume, replacing the old one
+        return JsonResponse({'message': 'File uploaded successfully', 'filename': resume.name})
+    return JsonResponse({'error': 'File upload failed'}, status=400)
 
 #sponsor options
 def sponsor_options(request):
