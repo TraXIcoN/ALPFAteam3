@@ -54,7 +54,7 @@ const CanSignup = () => {
       alert("Signup successful! You can now log in.");
 
       // Redirect to Typeformembed after successful signup
-      navigate("/Typeformembed"); // Redirect to Typeformembed
+      navigate("/Login"); // Redirect to Login
     } catch (error) {
       console.error("Error creating user:", error);
       alert(

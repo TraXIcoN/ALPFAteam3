@@ -19,13 +19,13 @@ import SponsorProfile from "./views/sponsor/profile/SponsorProfile";
 import { View } from "lucide-react";
 import Candidatelist from "./views/sponsor/Candidatelist";
 import Sponsorlist from "./views/candidate/Sponsorlist";
-import EventDescription from './views/candidate/EventDescription';
+import EventDescription from "./views/candidate/EventDescription";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/event/:id" component={<EventDescription/> } />
+        <Route path="/event/:id" component={<EventDescription />} />
         <Route path="/Sponsorlist" element={<Sponsorlist />} />
         <Route path="/Candidatelist" element={<Candidatelist />} />
         <Route path="/Sdashboard" element={<Sdashboard />} />
@@ -33,7 +33,10 @@ function App() {
         <Route path="/Candidatedashboard" element={<Candidatedashboard />} />
         <Route path="/Eventlist" element={<Eventlist />} />
         <Route path="/Typeformembed" element={<Typeformembed />} />
-        <Route path="/SponsorTypeformembed"element={<SponsorTypeformembed />}/>
+        <Route
+          path="/SponsorTypeformembed"
+          element={<SponsorTypeformembed />}
+        />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/Login" element={<Login />} />

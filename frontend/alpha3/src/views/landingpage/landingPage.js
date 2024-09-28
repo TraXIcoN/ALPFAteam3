@@ -26,15 +26,38 @@ const Landingpage = () => {
           <header className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg">
             <div className="container mx-auto px-4 py-6 flex justify-between items-center">
               <div className="flex items-center">
-                <img src={alpfalogo} alt="Latino Link Logo" className="h-16 w-16 mr-2" />
+                <img
+                  src={alpfalogo}
+                  alt="Latino Link Logo"
+                  className="h-16 w-16 mr-2"
+                />
                 <h1 className="text-3xl font-bold text-white">Latino Link</h1>
               </div>
               <nav>
                 <ul className="flex space-x-4">
-                  <li><a href="#about" className="text-white hover:text-blue-200">About Us</a></li>
-                  <li><a href="/Login" className="text-white hover:text-blue-200">Login</a></li>
-                  <li><a href="/admin" className="text-white hover:text-blue-200">Admin Login</a></li>
-                  <li><a href="/Signup" className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100">Sign Up</a></li>
+                  <li>
+                    <a href="#about" className="text-white hover:text-blue-200">
+                      About Us
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/Login" className="text-white hover:text-blue-200">
+                      Login
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/admin" className="text-white hover:text-blue-200">
+                      Admin Login
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/Corspage"
+                      className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100"
+                    >
+                      Sign Up
+                    </a>
+                  </li>
                 </ul>
               </nav>
             </div>
@@ -43,9 +66,17 @@ const Landingpage = () => {
           {/* Hero Section */}
           <section className="py-20 text-white">
             <div className="container mx-auto px-4 text-center">
-              <h2 className="text-4xl font-bold mb-4">Revolutionizing Job Matching for Latino Link Members</h2>
-              <p className="text-xl mb-8">Connecting qualified candidates with the right opportunities efficiently and effectively.</p>
-              <a href="#learn-more" className="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-100 inline-flex items-center">
+              <h2 className="text-4xl font-bold mb-4">
+                Revolutionizing Job Matching for Latino Link Members
+              </h2>
+              <p className="text-xl mb-8">
+                Connecting qualified candidates with the right opportunities
+                efficiently and effectively.
+              </p>
+              <a
+                href="#learn-more"
+                className="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-100 inline-flex items-center"
+              >
                 Learn More <ArrowRightIcon className="ml-2 h-5 w-5" />
               </a>
             </div>
@@ -58,19 +89,21 @@ const Landingpage = () => {
         {/* Features Section */}
         <section className="py-20">
           <div className="container mx-auto px-4">
-            <h3 className="text-3xl font-bold text-center mb-12">Our Solution</h3>
+            <h3 className="text-3xl font-bold text-center mb-12">
+              Our Solution
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <FeatureCard 
+              <FeatureCard
                 icon={<UserIcon className="h-12 w-12 text-blue-600" />}
                 title="Tailored Recommendations"
                 description="Provide personalized job matches for members and candidate suggestions for sponsors."
               />
-              <FeatureCard 
+              <FeatureCard
                 icon={<BriefcaseIcon className="h-12 w-12 text-blue-600" />}
                 title="Event-Specific Matching"
                 description="Optimize matching for both sponsor-specific events and career fairs."
               />
-              <FeatureCard 
+              <FeatureCard
                 icon={<LightbulbIcon className="h-12 w-12 text-blue-600" />}
                 title="Holistic Profiling"
                 description="Consider both professional skills and human aspects for comprehensive matching."
@@ -82,14 +115,16 @@ const Landingpage = () => {
         {/* Event Types Section */}
         <section className="bg-gray-200 py-20">
           <div className="container mx-auto px-4">
-            <h3 className="text-3xl font-bold text-center mb-12">Event Types</h3>
+            <h3 className="text-3xl font-bold text-center mb-12">
+              Event Types
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <EventTypeCard 
+              <EventTypeCard
                 title="Sponsor Specific Events"
                 sponsorNeed="Needs matching profiles"
                 memberBenefit="Invited if adequately matching the offer"
               />
-              <EventTypeCard 
+              <EventTypeCard
                 title="Career Fair Style Events"
                 sponsorNeed="Prefer matching profiles"
                 memberBenefit="Ranked list of likely interested sponsors"
@@ -99,31 +134,49 @@ const Landingpage = () => {
         </section>
 
         {/* About Us Section */}
-        <section id="about" className="bg-gray-100 py-12 px-6 md:px-12 lg:px-24 text-center">
-          <h2 className="text-4xl font-bold text-gray-800 mb-6">About Latino Link</h2>
+        <section
+          id="about"
+          className="bg-gray-100 py-12 px-6 md:px-12 lg:px-24 text-center"
+        >
+          <h2 className="text-4xl font-bold text-gray-800 mb-6">
+            About Latino Link
+          </h2>
           <p className="text-lg text-gray-700 mb-6">
-            At Latino Link, we are committed to bridging the gap between talented professionals and corporate sponsors. 
-            Our goal is to create meaningful connections that help both our members and sponsors thrive. 
-            Through our tailored approach, we ensure that our members find the best career opportunities 
-            and that sponsors connect with qualified, passionate individuals.
+            At Latino Link, we are committed to bridging the gap between
+            talented professionals and corporate sponsors. Our goal is to create
+            meaningful connections that help both our members and sponsors
+            thrive. Through our tailored approach, we ensure that our members
+            find the best career opportunities and that sponsors connect with
+            qualified, passionate individuals.
           </p>
           <p className="text-lg text-gray-700 mb-6">
-            We understand that job matching is more than just aligning skills and experience — it's about human connection, shared goals, 
-            and mutual growth. Whether you're a sponsor looking for the right candidates or a professional seeking the right role, 
-            we're here to make that process seamless and rewarding.
+            We understand that job matching is more than just aligning skills
+            and experience — it's about human connection, shared goals, and
+            mutual growth. Whether you're a sponsor looking for the right
+            candidates or a professional seeking the right role, we're here to
+            make that process seamless and rewarding.
           </p>
           <p className="text-lg text-gray-700">
-            With our innovative platform, we enhance your experience by providing personalized recommendations 
-            and guiding you to the opportunities that truly matter. Join us and be part of a community that values both professional and personal growth.
+            With our innovative platform, we enhance your experience by
+            providing personalized recommendations and guiding you to the
+            opportunities that truly matter. Join us and be part of a community
+            that values both professional and personal growth.
           </p>
         </section>
 
         {/* CTA Section */}
         <section className="bg-blue-600 text-white py-20">
           <div className="container mx-auto px-4 text-center">
-            <h3 className="text-3xl font-bold mb-4">Ready to Enhance Your Job Matching Experience?</h3>
-            <p className="text-xl mb-8">Join Latino Link today and connect with the right opportunities!</p>
-            <a href="/signup" className="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-100">
+            <h3 className="text-3xl font-bold mb-4">
+              Ready to Enhance Your Job Matching Experience?
+            </h3>
+            <p className="text-xl mb-8">
+              Join Latino Link today and connect with the right opportunities!
+            </p>
+            <a
+              href="/signup"
+              className="bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-100"
+            >
               Sign Up Now
             </a>
           </div>

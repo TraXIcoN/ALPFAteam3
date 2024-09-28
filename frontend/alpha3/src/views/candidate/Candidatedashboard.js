@@ -44,6 +44,7 @@ const logout = () => {
   // Clear the authentication token and user ID from local storage
   localStorage.removeItem("authToken");
   localStorage.removeItem("userId");
+  localStorage.removeItem("username");
 
   // Optionally, you can also clear any other user-related data
   // localStorage.removeItem("otherUserData");

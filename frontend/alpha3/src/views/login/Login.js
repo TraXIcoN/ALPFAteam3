@@ -16,6 +16,7 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import alpfalogo from "../../assets/alpfalogo.png";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -52,22 +53,58 @@ const Login = () => {
       );
 
       // Assuming the response contains the user data and token
-      const { username, token } = response.data; // Adjust based on your API response structure
+      console.log(response.data);
+      const { userId, username, token } = response.data; // Adjust based on your API response structure
 
-      // Store the token and username in local storage
+      // Store the token, username in local storage
       localStorage.setItem("authToken", token);
       localStorage.setItem("username", username); // Store the username
+      localStorage.setItem("userId", userId);
 
       console.log("Logged in username:", username);
 
-      // Navigate to CandidateDashboard after successful login
-      navigate("/CandidateDashboard"); // Redirect to CandidateDashboard
+      await checkCandidateInDatabase(username); // Assume this function checks the database
     } catch (error) {
       console.error("Error logging in:", error);
       alert(
         "Error logging in: " +
           (error.response?.data?.error || "Invalid credentials")
       );
+    }
+  };
+  // Function to check if candidate exists in the database
+  const checkCandidateInDatabase = async (username) => {
+    const userId = localStorage.getItem("userId"); // Assuming userId is stored in local storage
+    if (userId) {
+      formData.user = userId; // Add user ID to formData
+    } else {
+      alert("User ID is missing. Please log in again or Signup!");
+      return; // Stop submission if user ID is not found
+    }
+
+    try {
+      const token = localStorage.getItem("authToken");
+      const csrfToken = Cookies.get("csrftoken");
+      const response = await axios.put(
+        "http://localhost:8000/candidate/profile/",
+        formData, // Ensure formData has the correct values
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      navigate("/Typeformembed"); // Redirect if candidate does not exist
+    } catch (error) {
+      // Navigate to CandidateDashboard after successful login
+      navigate("/CandidateDashboard"); // Redirect to CandidateDashboard
+      if (error.response && error.response.status === 404) {
+        return null; // Return null if a 404 error occurs
+      }
+      console.error("Error checking candidate:", error);
+      return false; // Return false for other errors
     }
   };
 
@@ -119,7 +156,7 @@ const Login = () => {
           <form onSubmit={handleSubmit} style={{ marginTop: "1rem" }}>
             <TextField
               fullWidth
-              label="Email address"
+              label="Username"
               variant="outlined"
               margin="normal"
               name="email"

@@ -27,19 +27,6 @@ def signup(request):
         return Response({'message': 'Your account has been created! You can now log in.'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def signup_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()  # Save the user to the database
-            messages.success(request, 'Your account has been created! You can now log in.')
-            return redirect('login')  # Redirect to the login page
-        else:
-            messages.error(request, 'Please correct the error(s) below.')
-    else:
-        form = UserCreationForm()
-    return render(request, 'my_app/signup.html', {'form': form})
-
 @api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def login(request):
@@ -51,6 +38,7 @@ def login(request):
         # User is authenticated
         token, created = Token.objects.get_or_create(user=user)  # Generate or get the token for the user
         return Response({
+            'userId': user.id,
             'username': user.username,  # Return the username
             'token': token.key,  # Return the token
             'message': 'Login successful!'
@@ -165,6 +153,7 @@ def edit_candidate_profile_view(request):
 
         # Create a mapping of expected field names based on the incoming data
         expected_fields = {
+            'user': int(data.get('user')),
             'name': data.get('name'),
             'contact_info': data.get('contact_info'),
             'linkedin_profile': data.get('linkedin_profile'),

@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 
 const ViewProfile = () => {
   const [formData, setFormData] = useState({
+    user: "",
     fullName: "",
     contactInfo: "",
     linkedinProfile: "",
@@ -35,7 +36,6 @@ const ViewProfile = () => {
     relocationOpen: "",
     availability: "",
     endorsements: "",
-    preferredOrganizationSize: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -71,6 +71,16 @@ const ViewProfile = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Add user to formData
+    const userId = localStorage.getItem("userId"); // Assuming userId is stored in local storage
+    if (userId) {
+      formData.user = userId; // Add user ID to formData
+    } else {
+      alert("User ID is missing. Please log in again.");
+      return; // Stop submission if user ID is not found
+    }
+
     try {
       const token = localStorage.getItem("authToken");
       const csrfToken = Cookies.get("csrftoken");
