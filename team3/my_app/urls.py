@@ -24,6 +24,7 @@ urlpatterns = [
     path('sponsor/invites/', views.candidates_invited, name='candidates_invited'),
     path('sponsor/profile/', views.sponsor_profile, name='sponsor_profile'),
     path('sponsor/profile/edit/', views.edit_sponsor_profile, name='edit_sponsor_profile'),
+    path('sponsor/profile/id/', views.sponsor_profile_id, name='sponsor-profile-id'),
     path('sponsor/matches/', views.match_candidates_to_sponsors, name='match_candidates_to_sponsors'),
     path('sponsor/candidateList/', views.CandidateListView.as_view(), name='candidateList'),
 

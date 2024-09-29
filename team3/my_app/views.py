@@ -195,6 +195,7 @@ def edit_candidate_profile_view(request):
             return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_candidate_by_id(request, candidate_id):
@@ -228,6 +229,7 @@ def get_candidate_by_id(request, candidate_id):
         return Response(response_data, status=status.HTTP_200_OK)
     except Candidate.DoesNotExist:
         return Response({'error': 'Candidate not found.'}, status=status.HTTP_404_NOT_FOUND)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_resume(request):
@@ -250,6 +252,18 @@ def event_description(request):
 def candidates_invited(request):
     return render(request, 'my_app/sponsor/candidates_invited.html')
 
+# sponsor id
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sponsor_profile_id(request):
+    if request.method == 'GET':
+        try:
+            sponsor = Sponsor.objects.get(user=request.user)  # Fetch the sponsor based on the authenticated user
+            print(sponsor.id)
+            return Response({'id': sponsor.id}, status=status.HTTP_200_OK)  # Return the sponsor ID
+        except Sponsor.DoesNotExist:
+            return Response({'error': 'Sponsor profile does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def sponsor_profile(request):

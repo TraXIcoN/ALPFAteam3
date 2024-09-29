@@ -185,7 +185,9 @@ const getCandidateId = async (userId) => {
   try {
     const token = localStorage.getItem("authToken");
     const csrfToken = Cookies.get("csrftoken");
-    const response = await axios.get(
+
+    // Attempt to fetch candidate ID
+    const candidateResponse = await axios.get(
       `http://localhost:8000/candidate/profile/id/?user=${userId}`,
       {
         headers: {
@@ -195,10 +197,29 @@ const getCandidateId = async (userId) => {
         },
       }
     );
-    return response.data.id; // Assuming the response returns an array of candidates
+    return candidateResponse.data.id; // Assuming the response returns the candidate ID
   } catch (error) {
     console.error("Error fetching candidate ID:", error);
-    return null; // Handle error appropriately
+
+    // If fetching candidate ID fails, try fetching sponsor ID
+    try {
+      const token = localStorage.getItem("authToken");
+      const csrfToken = Cookies.get("csrftoken");
+      const sponsorResponse = await axios.get(
+        `http://localhost:8000/sponsor/profile/id/?user=${userId}`,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return sponsorResponse.data.id; // Assuming the response returns the sponsor ID
+    } catch (sponsorError) {
+      console.error("Error fetching sponsor ID:", sponsorError);
+      return { error: "Failed to fetch both candidate and sponsor IDs." }; // Return error message
+    }
   }
 };
 
