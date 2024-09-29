@@ -170,9 +170,14 @@ const SponsorList = () => {
               >
                 View Jobs
               </a>
-              <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">
+              <a
+                href={`mailto:contact@${sponsor.name
+                  .toLowerCase()
+                  .replace(/\s+/g, "")}.com`}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+              >
                 Contact
-              </button>
+              </a>
             </div>
           </div>
         ))}
