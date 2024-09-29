@@ -16,34 +16,29 @@ import Cookies from "js-cookie";
 
 const ViewSponsorProfile = () => {
   const [formData, setFormData] = useState({
-    companyWebsite: "",
-    jobTitle: "",
-    workEnvironment: "",
-    salaryRange: "",
-    openRoles: ["Other"],
-    requiredSkills: ["Communication"],
-    experienceLevel: "",
-    companyBenefits: ["Health Insurance", "Flexible Work Hours"],
-    growthOpportunities: "",
+    company_website: "",
+    job_title: "",
+    work_environment: "",
+    salary_range: "",
+    open_roles: [],
+    required_skills: [],
+    experience_level: "",
+    company_benefits: [],
+    growth_opportunities: "",
   });
-
-  console.log(formData);
 
   const [loading, setLoading] = useState(true);
 
   // Handle checkbox change
   const handleCheckboxChange = (name) => (event) => {
-    console.log(event); // Log the event to see its structure
-    if (!event || !event.target) {
-      console.error("Event or event.target is undefined");
-      return; // Exit if the event target is not defined
-    }
     const { value, checked } = event.target; // Accessing event.target
     setFormData((prevData) => {
+      // Ensure prevData[name] is an array
+      const currentValues = Array.isArray(prevData[name]) ? prevData[name] : [];
       const newValue = checked
-        ? [...prevData[name], value]
-        : prevData[name].filter((item) => item !== value);
-      return { ...prevData, [name]: newValue };
+        ? [...currentValues, value] // Add value if checked
+        : currentValues.filter((item) => item !== value); // Remove value if unchecked
+      return { ...prevData, [name]: newValue }; // Update state
     });
   };
 
@@ -61,31 +56,10 @@ const ViewSponsorProfile = () => {
           },
         }
       );
-      const {
-        company_website = "https://www.linkedin.com/in/adityamohan16/", // Default to empty string if null
-        job_title = "Full Stack developer", // Default to empty string if null
-        work_environment = "In_office", // Default to empty string if null
-        salary_range = "10-20", // Default to empty string if null
-        open_roles = ["Other"], // Default to ["Other"] if null
-        required_skills = ["Communication"], // Default to ["Communication"] if null
-        experience_level = "", // Default to empty string if null
-        company_benefits = ["Health Insurance", "Flexible Work Hours"], // Default to this array if null
-        growth_opportunities = "", // Default to empty string if null
-      } = null;
 
-      // Set formData with destructured values
-      setFormData({
-        companyWebsite: company_website,
-        jobTitle: job_title,
-        workEnvironment: work_environment,
-        salaryRange: salary_range,
-        openRoles: open_roles,
-        requiredSkills: required_skills,
-        experienceLevel: experience_level,
-        companyBenefits: company_benefits,
-        growthOpportunities: growth_opportunities,
-      });
-      setFormData(response.data); // Assuming the response data matches the formData structure
+      console.log("Fetched Profile Data:", response.data); // Log the response data
+
+      setFormData(response.data); // Update state with fetched data
       setLoading(false);
     } catch (error) {
       console.error("Error fetching profile data:", error);
@@ -95,18 +69,30 @@ const ViewSponsorProfile = () => {
 
   // Handle input change
   const handleChange = (event) => {
-    const { name, value } = event.target; // Ensure event.target is defined
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const { name, value } = event.target; // Get the name and value from the event
+    setFormData((prevData) => ({ ...prevData, [name]: value })); // Update the state
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Add user to formData
+    const userId = localStorage.getItem("userId"); // Assuming userId is stored in local storage
+    if (userId) {
+      formData.user = userId; // Add user ID to formData
+    } else {
+      alert("User ID is missing. Please log in again.");
+      return; // Stop submission if user ID is not found
+    }
+
+    console.log(formData);
+
     try {
       const token = localStorage.getItem("authToken");
+      console.log(token);
       const csrfToken = Cookies.get("csrftoken");
       const response = await axios.put(
-        "http://localhost:8000/candidate/profile/edit/",
+        "http://localhost:8000/sponsor/profile/edit/",
         formData, // Ensure formData has the correct values
         {
           headers: {
@@ -116,6 +102,7 @@ const ViewSponsorProfile = () => {
           },
         }
       );
+      console.log(response);
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -143,8 +130,8 @@ const ViewSponsorProfile = () => {
         <TextField
           label="Company Website"
           variant="outlined"
-          name="companyWebsite"
-          value={formData.companyWebsite}
+          name="company_website"
+          value={formData.company_website || ""}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -152,8 +139,8 @@ const ViewSponsorProfile = () => {
         <TextField
           label="Job Title"
           variant="outlined"
-          name="jobTitle"
-          value={formData.jobTitle}
+          name="job_title"
+          value={formData.job_title || ""}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -161,8 +148,8 @@ const ViewSponsorProfile = () => {
         <TextField
           label="Work Environment"
           variant="outlined"
-          name="workEnvironment"
-          value={formData.workEnvironment}
+          name="work_environment"
+          value={formData.work_environment}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -170,8 +157,8 @@ const ViewSponsorProfile = () => {
         <TextField
           label="Salary Range"
           variant="outlined"
-          name="salaryRange"
-          value={formData.salaryRange}
+          name="salary_range"
+          value={formData.salary_range || ""}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -190,8 +177,11 @@ const ViewSponsorProfile = () => {
               key={role}
               control={
                 <Checkbox
-                  checked={formData.openRoles.includes(role)}
-                  onChange={handleCheckboxChange("openRoles")}
+                  checked={
+                    Array.isArray(formData.open_roles) &&
+                    formData.open_roles.includes(role)
+                  } // Check for openRoles
+                  onChange={handleCheckboxChange("open_roles")}
                   value={role}
                 />
               }
@@ -213,8 +203,11 @@ const ViewSponsorProfile = () => {
               key={skill}
               control={
                 <Checkbox
-                  checked={formData.requiredSkills.includes(skill)}
-                  onChange={handleCheckboxChange("requiredSkills")}
+                  checked={
+                    Array.isArray(formData.required_skills) &&
+                    formData.required_skills.includes(skill)
+                  } // Check for requiredSkills
+                  onChange={handleCheckboxChange("required_skills")}
                   value={skill}
                 />
               }
@@ -225,8 +218,8 @@ const ViewSponsorProfile = () => {
         <TextField
           label="Experience Level"
           variant="outlined"
-          name="experienceLevel"
-          value={formData.experienceLevel}
+          name="experience_level"
+          value={formData.experience_level}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -243,8 +236,11 @@ const ViewSponsorProfile = () => {
               key={benefit}
               control={
                 <Checkbox
-                  checked={formData.companyBenefits.includes(benefit)}
-                  onChange={handleCheckboxChange("companyBenefits")}
+                  checked={
+                    Array.isArray(formData.company_benefits) &&
+                    formData.company_benefits.includes(benefit)
+                  } // Check for companyBenefits
+                  onChange={handleCheckboxChange("company_benefits")}
                   value={benefit}
                 />
               }
@@ -255,8 +251,8 @@ const ViewSponsorProfile = () => {
         <TextField
           label="Growth Opportunities"
           variant="outlined"
-          name="growthOpportunities"
-          value={formData.growthOpportunities}
+          name="growth_opportunities"
+          value={formData.growth_opportunities}
           onChange={handleChange}
           fullWidth
           margin="normal"

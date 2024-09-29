@@ -96,10 +96,10 @@ const Login = () => {
           },
         }
       );
-      navigate("/Typeformembed"); // Redirect if candidate does not exist
+      navigate("/CandidateDashboard"); // Redirect if candidate does not exist
     } catch (error) {
       // Navigate to CandidateDashboard after successful login
-      navigate("/CandidateDashboard"); // Redirect to CandidateDashboard
+      navigate("/Sdashboard"); // Redirect to CandidateDashboard
       if (error.response && error.response.status === 404) {
         return null; // Return null if a 404 error occurs
       }

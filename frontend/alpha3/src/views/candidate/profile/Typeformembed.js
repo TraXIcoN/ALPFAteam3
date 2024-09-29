@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -445,7 +446,7 @@ const Typeformembed = () => {
 
     setFormData(newFormData);
   };
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
     try {
@@ -465,6 +466,7 @@ const Typeformembed = () => {
 
       console.log("Candidate data submitted:", response.data);
       alert("Profile created successfully!");
+      navigate("/Candidatedashboard");
     } catch (error) {
       console.error("Error submitting candidate data:", error);
       alert(

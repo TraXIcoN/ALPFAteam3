@@ -54,7 +54,7 @@ const SpoSignup = () => {
       alert("Signup successful! You can now log in.");
 
       // Redirect to SponsorTypeformembed after successful signup
-      navigate("/SponsorTypeformembed"); // Redirect to SponsorTypeformembed
+      navigate("/Login"); // Redirect to Login
     } catch (error) {
       console.error("Error creating user:", error);
       alert(

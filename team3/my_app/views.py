@@ -8,10 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer, EventSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.views.decorators.csrf import csrf_exempt
-from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
 import spacy
 nlp = spacy.load("en_core_web_lg")
 
@@ -224,9 +221,9 @@ def candidates_invited(request):
 @permission_classes([IsAuthenticated])
 def sponsor_profile(request):
     if request.method == 'GET':
-        print("fetching details")
         try:
             sponsor = Sponsor.objects.get(user=request.user)
+            print(sponsor.company_website)
             # Prepare the response data
             response_data = {
             'company_website': sponsor.company_website,
@@ -287,28 +284,29 @@ def edit_sponsor_profile(request):
     if request.method == 'PUT':
         # Get the data from the request
         data = request.data
+        print(data)
 
         # Create a mapping of expected field names based on the incoming data
         expected_fields = {
-                    'user': request.user,  # Automatically set the user
-                    'company_website': data.get('0'),  # Company Website
-                    'job_title': data.get('1'),  # Job Title
-                    'work_environment': data.get('2').lower(),  # Work Environment
-                    'salary_range': data.get('3'),  # Salary Range
-                    'open_roles': data.get('4'),  # Open Roles
-                    'required_skills': data.get('5'),  # Required Skills
-                    'experience_level': data.get('6').lower(),  # Experience Level
-                    'company_benefits': data.get('7'),  # Company Benefits
-                    'growth_opportunities': data.get('8'),  # Growth Opportunities
-                }
+            'user': request.user,  # Automatically set the user
+            'company_website': data.get('company_website'),  # Company Website
+            'job_title': data.get('job_title'),  # Job Title
+            'work_environment': data.get('work_environment'),  # Work Environment
+            'salary_range': data.get('salary_range'),  # Salary Range
+            'open_roles': data.get('open_roles'),  # Open Roles
+            'required_skills': data.get('required_skills'),  # Required Skills
+            'experience_level': data.get('experience_level'),  # Experience Level
+            'company_benefits': data.get('company_benefits'),  # Company Benefits
+            'growth_opportunities': data.get('growth_opportunities'),  # Growth Opportunities
+        }
 
-        # Create a CandidateForm instance with the mapped data
-        form = CandidateForm(expected_fields, instance=candidate)
-        print(data)
+        # Create a SponsorForm instance with the mapped data
+        form = SponsorForm(expected_fields, instance=sponsor)
+
         if form.is_valid():
-            candidate = form.save(commit=False)
-            candidate.user = request.user  # Set the user here
-            candidate.save()
+            sponsor = form.save(commit=False)
+            sponsor.user = request.user  # Set the user here
+            sponsor.save()
             return Response({'message': 'Profile updated successfully!'}, status=status.HTTP_200_OK)
         else:
             return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)

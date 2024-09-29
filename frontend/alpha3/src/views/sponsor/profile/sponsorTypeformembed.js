@@ -79,7 +79,7 @@ const steps = [
     question: "What roles are currently open in your organization?",
     input: (value, onChange) => (
       <FormControl component="fieldset">
-        <FormLabel component="legend">Open Roles</FormLabel>
+        <FormLabel component="legend">Soft Skills</FormLabel>
         {[
           "Finance",
           "Technology",
@@ -93,13 +93,8 @@ const steps = [
             control={
               <Checkbox
                 checked={Array.isArray(value) && value.includes(role)}
-                onChange={(event) => {
-                  const newValue = event.target.checked
-                    ? [...(value || []), role]
-                    : value.filter((item) => item !== role);
-                  onChange(newValue);
-                }}
-                name={role}
+                onChange={onChange} // Ensure this is set correctly
+                name={role} // Ensure this is set correctly
               />
             }
             label={role}
@@ -109,11 +104,10 @@ const steps = [
     ),
   },
   {
-    question:
-      "What technical skills are required for the roles you're offering?",
+    question: "Which of these soft skills best describes you? (Select 3)",
     input: (value, onChange) => (
       <FormControl component="fieldset">
-        <FormLabel component="legend">Required Technical Skills</FormLabel>
+        <FormLabel component="legend">Soft Skills</FormLabel>
         {[
           "Communication",
           "Problem-solving",
@@ -127,13 +121,8 @@ const steps = [
             control={
               <Checkbox
                 checked={Array.isArray(value) && value.includes(skill)}
-                onChange={(event) => {
-                  const newValue = event.target.checked
-                    ? [...(value || []), skill]
-                    : value.filter((item) => item !== skill);
-                  onChange(newValue);
-                }}
-                name={skill}
+                onChange={onChange} // Ensure this is set correctly
+                name={skill} // Ensure this is set correctly
               />
             }
             label={skill}
@@ -164,7 +153,7 @@ const steps = [
       "Are there any specific company benefits you'd like to highlight?",
     input: (value, onChange) => (
       <FormControl component="fieldset">
-        <FormLabel component="legend">Company Benefits</FormLabel>
+        <FormLabel component="legend">Soft Skills</FormLabel>
         {[
           "Health Insurance",
           "401(k) Matching",
@@ -176,13 +165,8 @@ const steps = [
             control={
               <Checkbox
                 checked={Array.isArray(value) && value.includes(benefit)}
-                onChange={(event) => {
-                  const newValue = event.target.checked
-                    ? [...(value || []), benefit]
-                    : value.filter((item) => item !== benefit);
-                  onChange(newValue);
-                }}
-                name={benefit}
+                onChange={onChange} // Ensure this is set correctly
+                name={benefit} // Ensure this is set correctly
               />
             }
             label={benefit}
@@ -210,10 +194,14 @@ const steps = [
 
 const SponsorTypeformembed = () => {
   const [step, setStep] = useState(0);
-  const [formData, setFormData] = useState(Array(steps.length).fill([]));
+  const [formData, setFormData] = useState(Array(steps.length).fill("")); // Ensure proper initialization
 
   const handleChange = (index) => (event) => {
     const newFormData = [...formData];
+
+    // Check if event and event.target are defined
+    if (!event || !event.target) return;
+
     const value = newFormData[index];
 
     if (event.target.type === "checkbox") {
@@ -233,18 +221,14 @@ const SponsorTypeformembed = () => {
 
     setFormData(newFormData);
   };
-
-  const nextStep = () =>
-    setStep((prev) => Math.min(prev + 1, steps.length - 1));
-  const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
     try {
-      const csrfToken = Cookies.get("csrftoken"); // Get CSRF token
-      const token = localStorage.getItem("authToken"); // Get auth token from local storage
+      const csrfToken = Cookies.get("csrftoken"); // Get the CSRF token from cookies
+      const token = localStorage.getItem("authToken"); // Retrieve the token from local storage
       const response = await axios.post(
-        "http://localhost:8000/sponsor/profile/", // Update with your API endpoint
+        "http://localhost:8000/sponsor/profile/",
         formData,
         {
           headers: {
@@ -256,9 +240,8 @@ const SponsorTypeformembed = () => {
       );
 
       console.log("Sponsor data submitted:", response.data);
-      console.log(response);
-      alert("Profile created successfully!"); // Notify user of success
-      navigate("/Sdashboard"); // Navigate to Sdashboard
+      alert("Profile created successfully!");
+      navigate("/Sdashboard");
     } catch (error) {
       console.error("Error submitting sponsor data:", error);
       alert(
@@ -267,6 +250,10 @@ const SponsorTypeformembed = () => {
       );
     }
   };
+
+  const nextStep = () =>
+    setStep((prev) => Math.min(prev + 1, steps.length - 1));
+  const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
 
   return (
     <Box
@@ -308,62 +295,66 @@ const SponsorTypeformembed = () => {
         Profile
       </Typography>
 
-      {/* Main content */}
-      <Paper
-        elevation={3}
-        sx={{
-          width: "100%",
-          maxWidth: 600,
-          borderRadius: 4,
-          overflow: "hidden",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-        }}
-      >
-        <LinearProgress
-          variant="determinate"
-          value={(step / (steps.length - 1)) * 100}
+      {/* Main content wrapped in a form */}
+      <form onSubmit={handleSubmit}>
+        <Paper
+          elevation={3}
           sx={{
-            height: 16,
-            backgroundColor: "rgba(0, 0, 0, 0.1)",
-            "& .MuiLinearProgress-bar": { backgroundColor: "green" },
+            width: "100%",
+            maxWidth: 600,
+            borderRadius: 4,
+            overflow: "hidden",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
           }}
-        />
-        <Container maxWidth="sm" sx={{ py: 4 }}>
-          <Typography
-            variant="h6"
-            align="center"
-            gutterBottom
+        >
+          <LinearProgress
+            variant="determinate"
+            value={(step / (steps.length - 1)) * 100}
             sx={{
-              fontWeight: 600,
-              color: "#32325d",
-              mb: 3,
+              height: 16,
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              "& .MuiLinearProgress-bar": { backgroundColor: "green" },
             }}
-          >
-            {steps[step].question}
-          </Typography>
-          {steps[step].input(formData[step], handleChange(step))}
-          <Box sx={{ mt: 4, display: "flex", justifyContent: "space-between" }}>
-            {step > 0 && (
-              <Button variant="outlined" onClick={prevStep}>
-                Previous
-              </Button>
-            )}
-            {step < steps.length - 1 ? (
-              <Button variant="contained" onClick={nextStep}>
-                Next
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleSubmit}
-              >
-                Submit
-              </Button>
-            )}
-          </Box>
-        </Container>
-      </Paper>
+          />
+          <Container maxWidth="sm" sx={{ py: 4 }}>
+            <Typography
+              variant="h6"
+              align="center"
+              gutterBottom
+              sx={{
+                fontWeight: 600,
+                color: "#32325d",
+                mb: 3,
+              }}
+            >
+              {steps[step].question}
+            </Typography>
+            {steps[step].input(formData[step], handleChange(step))}
+            <Box
+              sx={{ mt: 4, display: "flex", justifyContent: "space-between" }}
+            >
+              {step > 0 && (
+                <Button variant="outlined" onClick={prevStep}>
+                  Previous
+                </Button>
+              )}
+              {step < steps.length - 1 ? (
+                <Button variant="contained" onClick={nextStep}>
+                  Next
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="success"
+                  type="submit" // Ensure this is the only button that submits the form
+                >
+                  Submit
+                </Button>
+              )}
+            </Box>
+          </Container>
+        </Paper>
+      </form>
     </Box>
   );
 };
