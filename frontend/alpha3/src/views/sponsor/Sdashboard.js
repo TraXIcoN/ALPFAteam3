@@ -134,39 +134,6 @@ const Sidebar = ({ activePage, setActivePage }) => {
           ))}
         </ul>
       </nav>
-      <div className="p-4 border-t">
-        {uploadedFileName && ( // Conditionally render the button if a file is uploaded
-          <a
-            href={`http://localhost:8000/media/resumes/${uploadedFileName}`} // Update with your Django media URL
-            className="block w-full bg-green-500 text-white py-2 px-4 rounded text-center mb-2"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View Uploaded Resume
-          </a>
-        )}
-        <h3 className="font-semibold mb-2 flex items-center">
-          <Upload className="mr-2" size={20} />
-          Upload Resume
-        </h3>
-        <input
-          type="file"
-          onChange={handleFileChange}
-          className="block w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-full file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100
-          "
-        />
-        <button
-          onClick={handleSubmit}
-          className="mt-2 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
-        >
-          Submit
-        </button>
-      </div>
     </div>
   );
 };

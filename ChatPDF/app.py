@@ -45,7 +45,7 @@ def get_vectorstore(chunks):
     vectorstore=faiss.FAISS.from_texts(texts=chunks,embedding=embeddings)
     return vectorstore
 
-# generating conversation chain  
+# generating conversation chain
 def get_conversationchain(vectorstore):
     llm=ChatOpenAI(temperature=0.2)
     memory = ConversationBufferMemory(memory_key='chat_history',
@@ -68,18 +68,30 @@ def handle_question(question):
         else:
             st.write(bot_template.replace("{{MSG}}",msg.content),unsafe_allow_html=True)
 
-
 def main():
     load_dotenv()
-    st.set_page_config(page_title="Chat with multiple PDFs",page_icon=":books:")
-    st.write(css,unsafe_allow_html=True)
+    st.set_page_config(page_title="Have questions about career pool or resume?",page_icon=":books:")
+    
+    # Custom CSS for dark cream background
+    st.markdown(
+        """
+        <style>
+        .reportview-container {
+            background-color: #f5f5dc; /* Dark cream color */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.write(css, unsafe_allow_html=True)
     if "conversation" not in st.session_state:
         st.session_state.conversation=None
 
     if "chat_history" not in st.session_state:
         st.session_state.chat_history=None
     
-    st.header("Chat with multiple PDFs :books:")
+    st.header("Have questions about career pool or resume? :books:")
     question=st.text_input("Ask question from your document:")
     if question:
         handle_question(question)
@@ -89,7 +101,7 @@ def main():
         docs_uploader = st.file_uploader("Upload your PDF here and click on 'Process'", accept_multiple_files=True)
         
         # Select folder containing PDFs
-        folder_path = st.text_input("./pdfs")
+        folder_path = st.text_input("Paste your path of folder containing resumes")
         if folder_path:
             import os
             docs_folder = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.endswith('.pdf')]
@@ -114,7 +126,6 @@ def main():
                 
                 #create conversation chain
                 st.session_state.conversation=get_conversationchain(vectorstore)
-
 
 if __name__ == '__main__':
     main()

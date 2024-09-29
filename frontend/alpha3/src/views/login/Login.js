@@ -85,9 +85,8 @@ const Login = () => {
     try {
       const token = localStorage.getItem("authToken");
       const csrfToken = Cookies.get("csrftoken");
-      const response = await axios.put(
+      const response = await axios.get(
         "http://localhost:8000/candidate/profile/",
-        formData, // Ensure formData has the correct values
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -98,13 +97,27 @@ const Login = () => {
       );
       navigate("/CandidateDashboard"); // Redirect if candidate does not exist
     } catch (error) {
-      // Navigate to CandidateDashboard after successful login
-      navigate("/Sdashboard"); // Redirect to CandidateDashboard
-      if (error.response && error.response.status === 404) {
-        return null; // Return null if a 404 error occurs
+      try {
+        const token = localStorage.getItem("authToken");
+        const csrfToken = Cookies.get("csrftoken");
+        const sponsorResponse = await axios.get(
+          "http://localhost:8000/sponsor/profile/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              "X-CSRFToken": csrfToken,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        navigate("/Sdashboard"); // Redirect to SponsorDashboard
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          return null; // Return null if a 404 error occurs
+        }
+        console.error("Error checking candidate:", error);
+        return false; // Return false for other errors
       }
-      console.error("Error checking candidate:", error);
-      return false; // Return false for other errors
     }
   };
 
