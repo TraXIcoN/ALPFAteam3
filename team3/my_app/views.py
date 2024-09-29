@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import UserSerializer, EventSerializer
+from rest_framework.views import APIView
+from .serializers import UserSerializer, EventSerializer, CandidateSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import JsonResponse
@@ -194,7 +195,39 @@ def edit_candidate_profile_view(request):
             return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_candidate_by_id(request, candidate_id):
+    try:
+        candidate = Candidate.objects.get(id=candidate_id)  # Fetch candidate by ID
+        response_data = {
+            'name': candidate.name,
+            'contact_info': candidate.contact_info,
+            'linkedin_profile': candidate.linkedin_profile,
+            'portfolio': candidate.portfolio,
+            'job_title': candidate.job_title,
+            'industry': candidate.industry,
+            'years_of_experience': candidate.years_of_experience,
+            'degree': candidate.degree,
+            'certification': candidate.certification,
+            'institution': candidate.institution,
+            'graduation_year': candidate.graduation_year,
+            'technical_skills': candidate.technical_skills,
+            'soft_skills': candidate.soft_skills,
+            'preferred_industry': candidate.preferred_industry,
+            'preferred_role': candidate.preferred_role,
+            'preferred_work_environment': candidate.preferred_work_environment,
+            'career_goals': candidate.career_goals,
+            'values': candidate.values,
+            'team_preferences': candidate.team_preferences,
+            'location_preference': candidate.location_preference,
+            'relocation_open': candidate.relocation_open,
+            'availability': candidate.availability,
+            'endorsements': candidate.endorsements,
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
+    except Candidate.DoesNotExist:
+        return Response({'error': 'Candidate not found.'}, status=status.HTTP_404_NOT_FOUND)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_resume(request):
@@ -313,6 +346,14 @@ def edit_sponsor_profile(request):
 
     return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+class CandidateListView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+    def get(self, request):
+        candidates = Candidate.objects.all()  # Fetch all candidates
+        serializer = CandidateSerializer(candidates, many=True)  # Serialize the data
+        return Response(serializer.data)  # Return the serialized data
+
 class EventListView(generics.ListCreateAPIView):  # Use ListCreateAPIView for both GET and POST
     queryset = Event.objects.all()
     serializer_class = EventSerializer
@@ -381,18 +422,28 @@ class EventDetailView(generics.RetrieveUpdateDestroyAPIView):  # Use RetrieveUpd
 #     context = {'matches': matches}
 #     return render(request, 'my_app/sponsor/candidates_invited.html', context)
 
-def match_candidates_to_sponsors(sponsor):
+@api_view(['POST', 'GET'])
+@permission_classes([IsAuthenticated])
+def match_candidates_to_sponsors(request):
+    # Extract sponsor data from the request
+    sponsor_data = request.data
+    print(sponsor_data)
+    open_roles = sponsor_data.get('open_roles', '')
+    industry = sponsor_data.get('industry', '')
+    required_skills = sponsor_data.get('required_skills', '')
+
     candidates = Candidate.objects.all()  # Get all candidates
     matches = []
 
     # Loop through candidates and calculate similarity
     for candidate in candidates:
         candidate_vector = nlp(f"{candidate.job_title} {candidate.industry} {candidate.technical_skills}")
-        sponsor_vector = nlp(f"{sponsor.roles_offered} {sponsor.industry} {sponsor.required_skills}")
+        sponsor_vector = nlp(f"{open_roles} {industry} {required_skills}")
         similarity = candidate_vector.similarity(sponsor_vector) * 100  # Convert to percentage
-        
-        # Set a threshold for matching, e.g., 75 for high similarity (now in percentage)
-        if similarity > 50:
-            matches.append({'candidate': candidate, 'similarity': similarity})
+        print(similarity)
 
-    return matches  # Return list of matched candidates
+        # Set a threshold for matching, e.g., 50 for high similarity (now in percentage)
+        # if similarity > 50:
+        matches.append({'candidate_id': candidate.id, 'similarity': similarity})
+
+    return Response(matches, status=status.HTTP_200_OK)  # Return list of matched candidates

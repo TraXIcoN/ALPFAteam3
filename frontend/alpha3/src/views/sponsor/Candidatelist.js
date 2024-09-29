@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaUserTie,
   FaUserGraduate,
@@ -18,6 +18,8 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import axios from "axios"; // Import Axios
+import Cookies from "js-cookie"; // Import js-cookie
 
 const CandidateList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,129 +28,98 @@ const CandidateList = () => {
   const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [candidates, setCandidates] = useState([]); // Ensure it's initialized as an empty array
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null); // Add error state
+  const [sortOption, setSortOption] = useState("matchScore"); // Default sort option
+  const [filterLocation, setFilterLocation] = useState(""); // Default filter location
 
-  const candidates = [
-    {
-      id: 1,
-      name: "Aditya Mohan",
-      jobTitle: "Full stack Developer",
-      location: "Atlanta, USA",
-      experience: "3 years",
-      skills: ["Django", "Python", "Azure"],
-      education: "M.Sc. Computer Science",
-      matchScore: 87,
-      major: "Computer Science",
-      icon: <FaUserTie />,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      jobTitle: "UI/UX Designer",
-      location: "San Francisco, USA",
-      experience: "5 years",
-      skills: ["Figma", "Sketch", "Adobe XD"],
-      education: "B.Des. Design",
-      matchScore: 93,
-      major: "Design",
-      icon: <FaUserGraduate />,
-    },
-    {
-      id: 3,
-      name: "Mark Taylor",
-      jobTitle: "Data Analyst",
-      location: "Boston, USA",
-      experience: "4 years",
-      skills: ["Python", "SQL", "Tableau"],
-      education: "B.Sc. Data Science",
-      matchScore: 45,
-      major: "Data Science",
-      icon: <FaUserCog />,
-    },
-    {
-      id: 4,
-      name: "Emily Zhang",
-      jobTitle: "Mechanical Engineer",
-      location: "Seattle, USA",
-      experience: "6 years",
-      skills: ["SolidWorks", "AutoCAD", "MATLAB"],
-      education: "B.Eng. Mechanical Engineering",
-      matchScore: 75,
-      major: "Mechanical Engineering",
-      icon: <FaUserMd />,
-    },
-    {
-      id: 5,
-      name: "Michael Johnson",
-      jobTitle: "Marketing Manager",
-      location: "Los Angeles, USA",
-      experience: "8 years",
-      skills: ["SEO", "Google Analytics", "Content Marketing"],
-      education: "BBA Marketing",
-      matchScore: 85,
-      major: "Marketing",
-      icon: <FaUserSecret />,
-    },
-    {
-      id: 6,
-      name: "Linda White",
-      jobTitle: "HR Specialist",
-      location: "Chicago, USA",
-      experience: "2 years",
-      skills: ["Employee Relations", "Recruitment", "Payroll"],
-      education: "BBA Human Resources",
-      matchScore: 60,
-      major: "Human Resources",
-      icon: <FaUserTie />,
-    },
-    {
-      id: 7,
-      name: "Sophia Gomez",
-      jobTitle: "Software Engineer",
-      location: "Austin, USA",
-      experience: "1 year",
-      skills: ["Java", "Spring Boot", "AWS"],
-      education: "B.Sc. Software Engineering",
-      matchScore: 50,
-      major: "Software Engineering",
-      icon: <FaUserGraduate />,
-    },
-    {
-      id: 8,
-      name: "James Carter",
-      jobTitle: "Civil Engineer",
-      location: "Miami, USA",
-      experience: "7 years",
-      skills: ["AutoCAD", "Project Management", "Structural Analysis"],
-      education: "B.Eng. Civil Engineering",
-      matchScore: 90,
-      major: "Civil Engineering",
-      icon: <FaUserCog />,
-    },
-    {
-      id: 9,
-      name: "Lisa Brown",
-      jobTitle: "Accountant",
-      location: "Dallas, USA",
-      experience: "4 years",
-      skills: ["Excel", "QuickBooks", "Tax Preparation"],
-      education: "B.Sc. Accounting",
-      matchScore: 30,
-      major: "Accounting",
-      icon: <FaUserMd />,
-    },
-    {
-      id: 10,
-      name: "Daniel Green",
-      jobTitle: "Product Manager",
-      location: "Denver, USA",
-      experience: "5 years",
-      skills: ["Agile", "JIRA", "Scrum"],
-      education: "MBA Product Management",
-      matchScore: 95,
-      major: "Product Management",
-      icon: <FaUserSecret />,
-    },
-  ];
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const csrfToken = Cookies.get("csrftoken");
+
+        // Fetch the sponsor's profile data
+        const sponsorResponse = await axios.get(
+          "http://localhost:8000/sponsor/profile/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              "X-CSRFToken": csrfToken,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const sponsorData = sponsorResponse.data; // Assuming the response contains the sponsor's data
+
+        // Prepare the request body with sponsor data
+        const requestBody = {
+          open_roles: sponsorData.open_roles,
+          industry: sponsorData.industry,
+          required_skills: sponsorData.required_skills,
+        };
+
+        // Send the request to match candidates
+        const matchResponse = await axios.post(
+          "http://localhost:8000/sponsor/matches/",
+          requestBody,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              "X-CSRFToken": csrfToken,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const matches = matchResponse.data; // Get the matched candidates with similarity scores
+
+        // Fetch candidate profiles based on matched candidate IDs
+        const candidateProfiles = await Promise.all(
+          matches.map(async (match) => {
+            const candidateResponse = await axios.get(
+              `http://localhost:8000/candidates/${match.candidate_id}/`,
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "X-CSRFToken": csrfToken,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            return { ...candidateResponse.data, similarity: match.similarity }; // Add similarity score to candidate data
+          })
+        );
+
+        setCandidates(candidateProfiles); // Set the fetched candidates with similarity scores
+      } catch (error) {
+        console.error("Error fetching candidates:", error);
+        setError("Failed to load candidates."); // Set error message
+      } finally {
+        setLoading(false); // Set loading to false after fetching
+      }
+    };
+
+    fetchCandidates();
+  }, []);
+
+  // Sorting function
+  const sortedCandidates = () => {
+    let sorted = [...candidates];
+    if (sortOption === "matchScore") {
+      sorted.sort((a, b) => b.similarity - a.similarity); // Sort by similarity score
+    } else if (sortOption === "experience") {
+      sorted.sort((a, b) => b.years_of_experience - a.years_of_experience); // Sort by experience
+    }
+    return sorted.filter((candidate) =>
+      filterLocation ? candidate.location_preference === filterLocation : true
+    ); // Filter by location if specified
+  };
+
+  if (loading) return <p>Loading candidates...</p>; // Show loading message
+  if (error) return <p>{error}</p>; // Show error message
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -198,81 +169,97 @@ const CandidateList = () => {
           onChange={handleSearchChange} // Update search term
         />
         <div className="mt-4 flex space-x-4">
-          <select className="p-2 border rounded-lg">
-            <option>Sort by Match Score</option>
-            <option>Sort by Experience</option> {/* Correctly closed option */}
+          <select
+            className="p-2 border rounded-lg"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)} // Update sort option
+          >
+            <option value="matchScore">Sort by Match Score</option>
+            <option value="experience">Sort by Experience</option>
           </select>
-          <select className="p-2 border rounded-lg">
-            <option>Filter by Location</option>
-            <option>New York</option>
-            <option>San Francisco</option>
-            <option>Boston</option>
+          <select
+            className="p-2 border rounded-lg"
+            value={filterLocation}
+            onChange={(e) => setFilterLocation(e.target.value)} // Update filter location
+          >
+            <option value="">Filter by Location</option>
+            <option value="New York">New York</option>
+            <option value="San Francisco">San Francisco</option>
+            <option value="Boston">Boston</option>
           </select>
         </div>
       </div>
 
       {/* Candidate List */}
       <div className="space-y-6">
-        {candidates.map((candidate) => (
-          <div
-            key={candidate.id}
-            className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="bg-gray-200 rounded-full h-12 w-12 flex-shrink-0 flex items-center justify-center text-xl">
-                {candidate.icon}
-              </div>{" "}
-              {/* Icon based on candidate */}
-              <div>
-                <h2 className="font-bold text-xl">{candidate.name}</h2>
-                <p className="text-gray-600">{candidate.jobTitle}</p>
-              </div>
-            </div>
-            <div className="mt-4">
-              <p className="text-gray-600">Location: {candidate.location}</p>
-              <p className="text-gray-600">
-                Experience: {candidate.experience}
-              </p>
-              <p className="text-gray-600">Education: {candidate.education}</p>
-              <p className="text-gray-600">Major: {candidate.major}</p>
-              <div className="mt-2">
-                <span className="font-semibold">Skills: </span>
-                {candidate.skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2"
-                  >
-                    {skill}
-                  </span>
-                ))}
+        {sortedCandidates().length > 0 ? ( // Use sorted and filtered candidates
+          sortedCandidates().map((candidate) => (
+            <div
+              key={candidate.id}
+              className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="bg-gray-200 rounded-full h-12 w-12 flex-shrink-0 flex items-center justify-center text-xl">
+                  <FaUserGraduate className="text-gray-600" /> {/* User icon */}
+                </div>
+                <div>
+                  <h2 className="font-bold text-xl">{candidate.name}</h2>
+                  <p className="text-gray-600">{candidate.job_title}</p>
+                </div>
               </div>
               <div className="mt-4">
                 <p className="text-gray-600">
-                  Match Score: {candidate.matchScore}%
+                  Location: {candidate.location_preference}
                 </p>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div
-                    className={`${
-                      candidate.matchScore >= 70 ? "bg-green-500" : "bg-red-500"
-                    } h-2.5 rounded-full`}
-                    style={{ width: `${candidate.matchScore}%` }}
-                  ></div>
+                <p className="text-gray-600">
+                  Experience: {candidate.years_of_experience} years
+                </p>
+                <p className="text-gray-600">Degree: {candidate.degree}</p>
+                <p className="text-gray-600">
+                  Institution: {candidate.institution}
+                </p>
+                <div className="mt-2">
+                  <span className="font-semibold">Skills: </span>
+                  {candidate.technical_skills.split(",").map((skill, index) => (
+                    <span
+                      key={index}
+                      className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2"
+                    >
+                      {skill.trim()}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-gray-600">Similarity Score:</p>
+                    <p className="text-gray-600 font-bold">
+                      {candidate.similarity.toFixed(2)}%
+                    </p>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                    <div
+                      className="bg-green-500 h-2.5 rounded-full"
+                      style={{ width: `${candidate.similarity}%` }} // Set width based on similarity score
+                    ></div>
+                  </div>
+                </div>
+                <div className="mt-4 flex space-x-2">
+                  <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                    View Profile
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                    onClick={handleClickOpen}
+                  >
+                    Message
+                  </button>
                 </div>
               </div>
-              <div className="mt-4 flex space-x-2">
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                  View Profile
-                </button>
-                <button
-                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
-                  onClick={handleClickOpen}
-                >
-                  Message
-                </button>
-              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No candidates found.</p> // Fallback message if no candidates
+        )}
       </div>
 
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
