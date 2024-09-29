@@ -43,13 +43,73 @@ We are developing a solution for the ALPFA organization to facilitate efficient 
 
 1. Clone the repo.
 2. Ensure you’re working in the correct branch (Main for backend, UI for frontend).
-3. Pull the latest changes from the main branch to avoid conflicts.
+3. Pull the latest changes from the ui branch to avoid conflicts.
 4. Make your updates and submit a pull request for review.
 
+## Project Structure
 
-Steps to setup the frontend(React)
-1. Clone the project
-2. Switch to the ui branch, then navigate to the frontend directory()
-3. Run the commnd "npm install to install all the node modules"
-4. To start the application, run the command "npm start"
+- **Frontend**: React application located in the `frontend/alpha3` directory.
+- **Streamlit App**: Web app for creating a RAG with PDFs.
+- **Backend**: Django application.
 
+## Installation Instructions
+
+### Frontend (React)
+
+1. Navigate to the `frontend/alpha3` directory:
+   ```bash
+   cd frontend/alpha3
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the application:
+   ```bash
+   npm start
+   ```
+
+### Streamlit App
+
+1. Navigate to the Streamlit app directory (assuming it's in `streamlit_app`):
+   ```bash
+   cd streamlit_app
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the Streamlit app:
+   ```bash
+   streamlit run app.py
+   ```
+
+### Backend (Django)
+
+1. Navigate to the Django backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create a virtual environment (optional but recommended):
+   ```bash
+   python3.11 -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run migrations:
+   ```bash
+   python manage.py migrate
+   ```
+5. Start the Django server:
+   ```bash
+   python manage.py runserver
+   ```
+
+## Requirements
+
+- **Python**: 3.11
+- **React**: 18
+- **Django**: Ensure all dependencies are listed in `requirements.txt`.
