@@ -1,12 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from .forms import CandidateForm, SponsorForm
-from .models import Candidate, Sponsor, Event, UserResume
+from .models import Candidate, Sponsor, Event, UserResume, Message
 from django.contrib.auth import authenticate
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
-from .serializers import UserSerializer, EventSerializer, CandidateSerializer
+from .serializers import UserSerializer, EventSerializer, CandidateSerializer, MessageSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import JsonResponse
@@ -202,6 +202,7 @@ def get_candidate_by_id(request, candidate_id):
     try:
         candidate = Candidate.objects.get(id=candidate_id)  # Fetch candidate by ID
         response_data = {
+            'id_can':candidate_id,
             'name': candidate.name,
             'contact_info': candidate.contact_info,
             'linkedin_profile': candidate.linkedin_profile,
@@ -263,7 +264,7 @@ def sponsor_profile_id(request):
             return Response({'id': sponsor.id}, status=status.HTTP_200_OK)  # Return the sponsor ID
         except Sponsor.DoesNotExist:
             return Response({'error': 'Sponsor profile does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-        
+
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def sponsor_profile(request):
@@ -404,37 +405,9 @@ class EventDetailView(generics.RetrieveUpdateDestroyAPIView):  # Use RetrieveUpd
             serializer.save()  # Save the updated event
             print(f"Event updated successfully: {serializer.data}")  # Log the updated event data
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
+
         print("Serializer errors:", serializer.errors)  # Log any serializer errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-# def calculate_similarity(candidate, sponsor):
-#     candidate_profile = f"{candidate.technical_skills} {candidate.soft_skills} {candidate.preferred_role} {candidate.years_of_experience}"
-#     sponsor_requirements = f"{sponsor.required_skills} {sponsor.preferred_skills} {sponsor.roles_offered} {sponsor.experience_range}"
-
-#     candidate_doc = nlp(candidate_profile)
-#     sponsor_doc = nlp(sponsor_requirements)
-
-#     similarity_score = candidate_doc.similarity(sponsor_doc)
-
-#     return similarity_score
-
-# def match_candidates_to_sponsors(request):
-#     sponsors = Sponsor.objects.all()
-#     candidates = Candidate.objects.all()
-#     matches = []
-#     print("Candidates:", candidates)
-#     print("Matches:", matches)
-#     for sponsor in sponsors:
-#         for candidate in candidates:
-#             similarity = calculate_similarity(candidate, sponsor)
-#             print(f"Candidate: {candidate.name}, Sponsor: {sponsor.org_name}, Similarity: {similarity}")
-#             print(similarity)
-#             if similarity > 0.75:  # Threshold for inviting candidates
-#                 matches.append((candidate, sponsor, similarity))
-
-#     # Optionally send invites based on the matches found
-#     context = {'matches': matches}
-#     return render(request, 'my_app/sponsor/candidates_invited.html', context)
 
 @api_view(['POST', 'GET'])
 @permission_classes([IsAuthenticated])
@@ -461,3 +434,33 @@ def match_candidates_to_sponsors(request):
         matches.append({'candidate_id': candidate.id, 'similarity': similarity})
 
     return Response(matches, status=status.HTTP_200_OK)  # Return list of matched candidates
+
+@api_view(['POST'])
+def send_message(request):
+    serializer = MessageSerializer(data=request.data)
+    if serializer.is_valid():
+        # Create and save the message
+        Message.objects.create(
+            sender=request.user,  # Assuming the user is the sponsor
+            recipient=Candidate.objects.get(id=serializer.validated_data['candidate_id']),
+            subject=serializer.validated_data['subject'],
+            message=serializer.validated_data['message']
+        )
+        return Response({"message": "Message sent successfully!"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_messages(request):
+    candidate = get_object_or_404(Candidate, user=request.user)  # Get the candidate based on the authenticated user
+    messages = Message.objects.filter(recipient=candidate).order_by('-timestamp')  # Fetch messages for the candidate
+    response_data = [
+        {
+            'sender': message.sender.username,
+            'subject': message.subject,
+            'message': message.message,
+            'timestamp': message.timestamp,
+        }
+        for message in messages
+    ]
+    return Response(response_data, status=status.HTTP_200_OK)

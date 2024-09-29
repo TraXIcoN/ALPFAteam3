@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Candidate, Sponsor
+from .models import Candidate, Sponsor, Event, Message
 from django.contrib.auth.models import User
 
 class CandidateSerializer(serializers.ModelSerializer):
@@ -23,10 +23,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-# serializers.py
-from rest_framework import serializers
-from .models import Event
-
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
@@ -36,3 +32,8 @@ class SponsorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sponsor
         fields = '__all__'
+
+class MessageSerializer(serializers.Serializer):
+    candidate_id = serializers.IntegerField()
+    subject = serializers.CharField(max_length=255)
+    message = serializers.CharField()

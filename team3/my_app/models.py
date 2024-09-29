@@ -87,3 +87,13 @@ class Event(models.Model):
 class UserResume(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     resume = models.FileField(upload_to='resumes/')
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)  # Sponsor
+    recipient = models.ForeignKey('Candidate', on_delete=models.CASCADE)  # Candidate
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Message from {self.sender} to {self.recipient} - {self.subject}"

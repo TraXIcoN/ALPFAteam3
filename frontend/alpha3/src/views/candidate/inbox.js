@@ -1,5 +1,5 @@
-// src/Inbox.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Ensure useState and useEffect are imported
+import axios from "axios"; // Import axios for making HTTP requests
 import {
   Box,
   List,
@@ -8,6 +8,7 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
+import Cookies from "js-cookie"; // Import js-cookie
 
 const messagesData = [
   {
@@ -37,11 +38,34 @@ const messagesData = [
 ];
 
 const InboxComponent = () => {
+  const [messagesData, setMessagesData] = useState([]); // State to hold messages
   const [selectedMessage, setSelectedMessage] = useState(null);
+
+  const fetchMessages = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const csrfToken = Cookies.get("csrftoken");
+      const response = await axios.get("http://localhost:8000/get-messages/", {
+        headers: {
+          Authorization: `Token ${token}`,
+          "X-CSRFToken": csrfToken,
+          "Content-Type": "application/json",
+        },
+      });
+      setMessagesData(response.data); // Store fetched messages in state
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  };
 
   const handleSelectMessage = (message) => {
     setSelectedMessage(message);
   };
+
+  // Call fetchMessages when the component mounts
+  useEffect(() => {
+    fetchMessages();
+  }, []);
 
   return (
     <Box display="flex" height="100vh">
@@ -51,12 +75,12 @@ const InboxComponent = () => {
           {messagesData.map((message) => (
             <ListItem
               button
-              key={message.id}
+              key={message.id} // Ensure the key is unique
               onClick={() => handleSelectMessage(message)}
             >
               <ListItemText
                 primary={message.subject}
-                secondary={`From: ${message.from}`}
+                secondary={`From: ${message.sender}`} // Adjusted to use sender
               />
             </ListItem>
           ))}
@@ -67,10 +91,10 @@ const InboxComponent = () => {
           <>
             <Typography variant="h6">{selectedMessage.subject}</Typography>
             <Typography variant="subtitle1">
-              From: {selectedMessage.from}
+              From: {selectedMessage.sender}
             </Typography>
             <Divider sx={{ my: 2 }} />
-            <Typography>{selectedMessage.body}</Typography>
+            <Typography>{selectedMessage.message}</Typography>
           </>
         ) : (
           <Typography variant="body1">Select a message to read.</Typography>

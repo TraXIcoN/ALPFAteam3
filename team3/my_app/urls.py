@@ -31,4 +31,8 @@ urlpatterns = [
     #Events
     path('api/events/', views.EventListView.as_view(), name='event-list'),
     path('api/events/<int:pk>/', views.EventDetailView.as_view(), name='event-detail'),  # For retrieving, updating, and deleting an event
+
+    #messages
+    path('send-message/', views.send_message, name='send-message'),
+    path('get-messages/', views.get_messages, name='get-messages'),  # New endpoint
 ]

@@ -33,6 +33,7 @@ const CandidateList = () => {
   const [error, setError] = useState(null); // Add error state
   const [sortOption, setSortOption] = useState("matchScore"); // Default sort option
   const [filterLocation, setFilterLocation] = useState(""); // Default filter location
+  const [selectedCandidateId, setSelectedCandidateId] = useState(null); // State to store selected candidate ID
 
   useEffect(() => {
     const fetchCandidates = async () => {
@@ -141,7 +142,8 @@ const CandidateList = () => {
     setFilteredCandidates([]);
   };
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (candidate) => {
+    setSelectedCandidateId(candidate.id_can); // Set the selected candidate ID using id_can
     setOpen(true);
   };
 
@@ -151,10 +153,32 @@ const CandidateList = () => {
     setMessage("");
   };
 
-  const handleSend = () => {
-    // Here you can handle the send action (e.g., API call)
-    alert("Message sent!"); // Show message to user
-    handleClose(); // Close the popup
+  const handleSend = async () => {
+    if (!selectedCandidateId) return; // Ensure a candidate ID is selected
+    try {
+      const token = localStorage.getItem("authToken");
+      const csrfToken = Cookies.get("csrftoken");
+      const response = await axios.post(
+        "http://localhost:8000/send-message/",
+        {
+          candidate_id: selectedCandidateId, // Use the selected candidate's ID
+          subject: subject,
+          message: message,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert(response.data.message); // Show success message
+      handleClose(); // Close the popup
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message."); // Show error message
+    }
   };
 
   return (
@@ -249,7 +273,7 @@ const CandidateList = () => {
                   </button>
                   <button
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
-                    onClick={handleClickOpen}
+                    onClick={() => handleClickOpen(candidate)} // Pass candidate to the function
                   >
                     Message
                   </button>
